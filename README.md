@@ -1,4 +1,4 @@
-spray-collectionJson
+scala-collection-json
 ====================
 
-Simple implementation of the Collection+JSON media type using Spray
+Scala converter library for Collection+JSON media type model.
