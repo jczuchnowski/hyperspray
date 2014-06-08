@@ -2,7 +2,7 @@ name := "scala-collection-json"
 
 version := "1.0.0"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.1"
 
 resolvers ++= Seq(
   "snapshots"           at "http://oss.sonatype.org/content/repositories/snapshots",
@@ -23,9 +23,6 @@ libraryDependencies ++= {
     "ch.qos.logback"          %   "logback-classic" % "1.1.1",
     "joda-time"               %   "joda-time"       % "2.3",
     "org.joda"                %   "joda-convert"    % "1.4",
-    "org.scalaz"              %%  "scalaz-core"     % "7.0.5",
-    "org.specs2"              %%  "specs2"          % "2.3.11" % "test",
-    "org.mockito"             %   "mockito-all"     % "1.9.5" % "test",
-	"junit"                   %   "junit"           % "4.11" % "test"
+    "org.mockito"             %   "mockito-all"     % "1.9.5" % "test"
   )
 }
