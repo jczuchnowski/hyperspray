@@ -27,7 +27,7 @@ object Convertable {
     
     c.Expr[Convertable[T]] { q"""
       new Convertable[$tpe] {
-        def toParamSeq(t: $tpe): Seq[Tuple2[String, Any]] = IndexedSeq(..$paramSeq)
+        def toParamSeq(t: $tpe): Seq[Tuple2[String, Any]] = Seq(..$paramSeq)
       }
     """ }
   }

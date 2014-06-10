@@ -1,7 +1,6 @@
 package org.collectionjson.model
 
 import java.net.URI
-import scala.collection.immutable._
 
 case class CollectionJson(collection: Collection)
 
@@ -24,7 +23,7 @@ case class Data(prompt: Option[String] = None, name: String, value: Option[Any] 
 
 case class Query(
     href: URI, 
-    rel: String, 
+    rel: String, true
     name: Option[String] = None, 
     prompt: Option[String] = None, 
     data: Seq[QueryData] = Seq.empty)

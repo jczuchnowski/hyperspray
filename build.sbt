@@ -23,6 +23,6 @@ libraryDependencies ++= {
     "ch.qos.logback"          %   "logback-classic" % "1.1.1",
     "joda-time"               %   "joda-time"       % "2.3",
     "org.joda"                %   "joda-convert"    % "1.4",
-    "org.mockito"             %   "mockito-all"     % "1.9.5" % "test"
+    "org.scalatest"           %%  "scalatest"       % "2.2.0" % "test"
   )
 }
