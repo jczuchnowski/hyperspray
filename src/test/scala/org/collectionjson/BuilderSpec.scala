@@ -3,6 +3,7 @@ package org.collectionjson
 import java.net.URI
 import org.collectionjson.model._
 import org.scalatest.FlatSpec
+import org.collectionjson.macros._
 
 class BuilderSpec extends FlatSpec {
 
@@ -16,7 +17,7 @@ class BuilderSpec extends FlatSpec {
     TestItem("id3", "name3", 33))
   
   "A CollectionJson Builder" should "create minimal CollectionJson" in {    
-    val coll = Builder.newCollectionJson(href, Seq.empty)
+    val coll = Builder.newCollectionJson[TestItem](href, Seq.empty)
     
     assert( coll == CollectionJson(Collection("1.0", href, Seq.empty, Seq.empty, Seq.empty, None, None)))
   }

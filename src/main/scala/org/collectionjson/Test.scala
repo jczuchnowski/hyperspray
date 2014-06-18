@@ -3,9 +3,9 @@ package org.collectionjson
 import org.collectionjson.macros._
 import org.collectionjson.macros.Convertable._
 import org.collectionjson.model.CollectionJson
+import org.collectionjson.model.Item
 import org.collectionjson.Implicits._
 import java.net.URI
-import org.collectionjson.model.Item
 
 case class Person(name: String, age: Int)
 
