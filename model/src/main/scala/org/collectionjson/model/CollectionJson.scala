@@ -23,7 +23,7 @@ case class Data(prompt: Option[String] = None, name: String, value: Option[Any] 
 
 case class Query(
     href: URI, 
-    rel: String, true
+    rel: String,
     name: Option[String] = None, 
     prompt: Option[String] = None, 
     data: Seq[QueryData] = Seq.empty)
