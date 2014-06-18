@@ -4,8 +4,10 @@ import java.net.URI
 import org.collectionjson.model._
 import org.scalatest.FlatSpec
 import org.collectionjson.macros._
+import org.scalatest.Matchers
+import scala.language.postfixOps
 
-class BuilderSpec extends FlatSpec {
+class BuilderSpec extends FlatSpec with Matchers {
 
   case class TestItem(id: String, name: String, age: Int)
   
@@ -17,7 +19,7 @@ class BuilderSpec extends FlatSpec {
     TestItem("id3", "name3", 33))
   
   "A CollectionJson Builder" should "create minimal CollectionJson" in {    
-    val coll = Builder.newCollectionJson[TestItem](href, Seq.empty)
+    val coll = Builder.newCollectionJson(href, Seq.empty[Unit])
     
     assert( coll == CollectionJson(Collection("1.0", href, Seq.empty, Seq.empty, Seq.empty, None, None)))
   }
@@ -35,6 +37,24 @@ class BuilderSpec extends FlatSpec {
       assert( item.data(1).value == Some(tstItem.name))
       assert( item.data(2).value == Some(tstItem.age))
     }
+  }
+  
+  it should "create CollectionJson with Template" in {
+    val coll = Builder.newCollectionJson(href, testItems)
+
+    val template = coll.collection.template
+    
+    val expected = Some(
+      Template(
+        Seq(
+          Data(None, "id", None), 
+          Data(None, "name", None), 
+          Data(None, "age", None)
+        )
+      )
+    )
+    
+    template should be (expected)    
   }
 
 }
