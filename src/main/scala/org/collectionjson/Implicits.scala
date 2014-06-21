@@ -40,7 +40,7 @@ object Implicits {
   
   implicit class RichCollectionJson(cj: CollectionJson) {
     
-    def withProfileLinkElem(href: URI): CollectionJson = {
+    def withProfileLink(href: URI): CollectionJson = {
       val newLinks = cj.collection.links :+ Link(href = href, rel = Profile.rel)
       
       CollectionJson(cj.collection.copy(links = newLinks))
