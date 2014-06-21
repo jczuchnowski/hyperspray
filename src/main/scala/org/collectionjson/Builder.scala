@@ -11,11 +11,13 @@ object Builder {
     
     val convItems = itemsWithData(href, items)
     
-    val templateData = items.headOption map { item =>
-      templateWithData(href, item)
+    val template = {
+      val templateData = items.headOption map { item =>
+        templateWithData(href, item)
+      }
+      
+      templateData map { Template }
     }
-    
-    val template = templateData map { Template }
     
     CollectionJson(
       Collection(href = href, items = convItems, template = template)

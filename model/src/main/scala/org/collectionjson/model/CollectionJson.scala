@@ -2,12 +2,23 @@ package org.collectionjson.model
 
 import java.net.URI
 
+object CollectionJson {
+  
+  sealed trait Rel {
+    def rel: String
+  }
+
+  case object Profile extends Rel {
+    val rel = "profile"
+  }
+}
+
 case class CollectionJson(collection: Collection)
 
 case class Collection(
     version: String = "1.0", 
     href: URI,
-    links: Seq[Link] = Seq.empty,
+    links: Seq[Link] = Seq.empty, //not supported
     items: Seq[Item] = Seq.empty,
     queries: Seq[Query] = Seq.empty,
     template: Option[Template] = None,
@@ -30,4 +41,4 @@ case class Query(
 
 case class QueryData(name: String, value: String)
 
-case class Link(href: URI, rel: String, name: Option[String] = None, render: Option[String], prompt: Option[String] = None)
+case class Link(href: URI, rel: String, name: Option[String] = None, render: Option[String] = None, prompt: Option[String] = None)

@@ -3,6 +3,7 @@ package org.collectionjson
 import org.collectionjson.macros._
 import org.collectionjson.macros.Convertable._
 import org.collectionjson.model._
+import org.collectionjson.model.CollectionJson._
 import scala.language.implicitConversions
 import java.net.URI
 
@@ -20,10 +21,29 @@ object Implicits {
     
     def asItem(uri: URI): Item = {
       val params: Seq[(String, Any)] = implicitly[Convertable[T]].toParamSeq(t)
+      
       val data = params.map( p => Data(name = p._1, value = Some(p._2)))
-      Item(href = uri, data = data)
+      
+      // take the first parameter as an ID
+      val idVal = params.headOption.map( p => p._2.toString()).getOrElse("")
+      
+      // make sure the URI ends with a slash
+      val itemUri = if (uri.toString().endsWith("/")) {
+        uri.resolve(idVal)
+      } else {
+        new URI(uri.toString() + "/").resolve(idVal)
+      }
+      
+      Item(href = itemUri, data = data)
     }
   }
   
-  
+  implicit class RichCollectionJson(cj: CollectionJson) {
+    
+    def withProfileLinkElem(href: URI): CollectionJson = {
+      val newLinks = cj.collection.links :+ Link(href = href, rel = Profile.rel)
+      
+      CollectionJson(cj.collection.copy(links = newLinks))
+    }
+  }
 }
