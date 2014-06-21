@@ -2,17 +2,6 @@ package org.collectionjson.model
 
 import java.net.URI
 
-object CollectionJson {
-  
-  sealed trait Rel {
-    def rel: String
-  }
-
-  case object Profile extends Rel {
-    val rel = "profile"
-  }
-}
-
 case class CollectionJson(collection: Collection)
 
 case class Collection(

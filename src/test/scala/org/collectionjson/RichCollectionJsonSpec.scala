@@ -5,7 +5,7 @@ import org.scalatest.Matchers
 import org.collectionjson.Implicits._
 import org.collectionjson.macros._
 import org.collectionjson.model._
-import org.collectionjson.model.CollectionJson._
+import org.collectionjson.model.Properties._
 import java.net.URI
 
 class RichCollectionJsonSpec extends FlatSpec with Matchers {
