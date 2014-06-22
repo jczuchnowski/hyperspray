@@ -22,16 +22,14 @@ object CollectionJsonDirective extends Directives {
       binary = true,
       fileExtensions = Seq.empty))
   
-  def getCollection[T : Convertable](href: String)(service: CollectionService[T]): CollectionJson = {
+  private def getCollection[T : Convertable](href: URI)(service: CollectionJsonService[T]): CollectionJson = {
     val items = service.getItems
     
-    val collJson = Builder.newCollectionJson(new URI(href), items)
-    
-    collJson
+    Builder.newCollectionJson(href, items)
   }
   
-  def route[T : Convertable](baseHref: String)(service: CollectionService[T]) = 
-    path(baseHref) {
+  def route[T : Convertable](baseHref: URI)(service: CollectionJsonService[T]) =
+    path(cleanPath(baseHref)) {
       respondWithMediaType(`application/vnd.collection+json`) {
         get {
           complete {
@@ -40,4 +38,10 @@ object CollectionJsonDirective extends Directives {
         }
       }
     }
+  
+  private def cleanPath(uri: URI) = if (uri.getPath().startsWith("/")) {
+    uri.getPath().drop(1)
+  } else {
+    uri.getPath()
+  }
 }

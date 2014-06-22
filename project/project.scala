@@ -12,5 +12,5 @@ object MacroBuild extends Build {
   
   lazy val colljsonSpray = Project("collectionjson-spray", file("collectionjson-spray")) dependsOn(colljsonBuilder, colljsonModel)
 
-  lazy val Project("example", file("example")) dependsOn(colljsonSpray)
+  //lazy val Project("example", file("example")) dependsOn(colljsonSpray)
 }
