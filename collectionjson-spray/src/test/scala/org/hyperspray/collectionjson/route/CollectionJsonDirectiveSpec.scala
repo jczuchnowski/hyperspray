@@ -9,7 +9,9 @@ import org.collectionjson.macros.Convertable
 import CollectionJsonDirective.`application/vnd.collection+json`
 import java.net.URI
 import spray.http.StatusCodes._
+import spray.http.HttpEntity
 import org.collectionjson.Implicits._
+import spray.http.MediaTypes._
 
 class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestRouteTest with HttpService {
 
@@ -66,26 +68,37 @@ class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestR
     }    
   }
   
+  val tmpl = HttpEntity(`application/json`, 
+"""
+{"template" : {
+    "data" : [
+        {"name" : "id", "value" : "124"},
+        {"name" : "name", "value" : "Jakub"},
+        {"name" : "age", "value" : "33"}
+    ]
+}}
+""")
+  
   "base path POST" should "respond with application/vnd.collection+json media type" in {
-    Post("/test-items") ~> route ~> check {
+    Post("/test-items", tmpl) ~> route ~> check {
       mediaType shouldBe `application/vnd.collection+json`
     }
   }
   
   it should "respond with 201 status code" in {
-    Post("/test-items") ~> route ~> check {
+    Post("/test-items", tmpl) ~> route ~> check {
       status shouldBe Created
     }    
   }
   
   it should "respond with 403 status code" in {
-    Post("/test-items") ~> route ~> check {
+    Post("/test-items", tmpl) ~> route ~> check {
       status shouldBe BadRequest
     }
   }
   
   it should "respond with a location header" in {
-    Post("/test-items") ~> route ~> check {
+    Post("/test-items", tmpl) ~> route ~> check {
       header("Location") shouldBe "http://0.0.0.0:8080/test-items/124"
     }
   }

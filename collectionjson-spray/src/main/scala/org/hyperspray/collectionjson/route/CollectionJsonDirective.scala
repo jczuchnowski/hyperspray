@@ -64,13 +64,13 @@ object CollectionJsonDirective extends Directives {
           }
         } ~
         post {
-          entity(as[Template]) { tmpl =>
+          entity(as[Commands.AddItemCommand]) { cmd =>
             
-            val newId = addItem(baseHref, service, tmpl)
-  
+            val newId = addItem(baseHref, service, cmd.template)
+            
             respondWithHeader(`Location`(s"$baseHref/$newId")) {
               complete(StatusCodes.Created, "")
-            }
+            }  
           }
         }
       }
