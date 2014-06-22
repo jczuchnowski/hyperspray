@@ -13,7 +13,6 @@ object Convertable {
   def materializeConvertableImpl[T: c.WeakTypeTag](c: Context): c.Expr[Convertable[T]] = {
     import c.universe._
     val tpe = weakTypeOf[T]
-    val companion = tpe.typeSymbol.companionSymbol
 
     val fields = tpe.declarations.collectFirst { 
       case m: MethodSymbol if m.isPrimaryConstructor => m 

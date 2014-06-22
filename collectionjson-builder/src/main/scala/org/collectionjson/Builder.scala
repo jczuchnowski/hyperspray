@@ -24,6 +24,9 @@ object Builder {
     )
   }
   
+  def newCollectionJson[T : Convertable](href: URI, item: T): CollectionJson =
+    newCollectionJson(href, Seq(item))
+  
   private[this] def itemsWithData[T : Convertable](href: URI, items: Seq[T]) = items.map(_.asItem(href))
   
   //TODO could this be done without passing in any instance - only type ?
