@@ -1,7 +1,3 @@
-name := "collectionjson-spray"
-
-version := "0.1"
-
 scalaVersion := "2.11.1"
 
 resolvers ++= Seq(
@@ -13,17 +9,20 @@ resolvers ++= Seq(
 
 EclipseKeys.withSource := true
 
+seq(Revolver.settings: _*)
+
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation", "-encoding", "utf8")
 
 javaOptions := Seq("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000")
 
 libraryDependencies ++= {
   val akkaVersion = "2.3.3"
-  val sprayVersion = "1.3.1-20140423"
+  val sprayVersion = "1.3.1"
   Seq(
-    "io.spray"                %   "spray-can"       % sprayVersion,
-    "io.spray"                %   "spray-routing"   % sprayVersion,
-    "io.spray"                %   "spray-testkit"   % sprayVersion % "test",
+    "io.spray"                %%  "spray-can"       % sprayVersion,
+    "io.spray"                %%  "spray-routing"   % sprayVersion,
+    "io.spray"                %%  "spray-testkit"   % sprayVersion % "test",
+    "io.spray"                %%  "spray-json"      % "1.2.6",  
     "com.typesafe.akka"       %%  "akka-actor"      % akkaVersion,
     "com.typesafe.akka"       %%  "akka-testkit"    % akkaVersion % "test",
     "org.slf4j"               %   "slf4j-api"       % "1.7.6",
