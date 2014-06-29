@@ -24,12 +24,12 @@ object Recoverable {
       val mapKey: String = name.decoded
       val returnType = tpe.declaration(name).typeSignature
       
-      q"p.find( it => it._1 == $mapKey).getOrElse(null).asInstanceOf[$returnType]"
+      q"p.find( it => it._1 == $mapKey).map(_._2).get.asInstanceOf[$returnType]"
     }
     
     c.Expr[Recoverable[T]] { q"""
       new Recoverable[$tpe] {
-        def fromParams(p: Seq[Tuple2[String, Any]]): $tpe = $companion(..$item)
+        def fromParams(p: Seq[Tuple2[String, Any]]): $tpe = { $companion(..$item) }
       }
     """ }
   }

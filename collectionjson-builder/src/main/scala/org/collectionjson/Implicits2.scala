@@ -3,6 +3,8 @@ package org.collectionjson
 import org.collectionjson.macros._
 import org.collectionjson.macros.Recoverable._
 import org.collectionjson.model.Template
+import scala.util.Try
+import scala.util.Either
 
 object Implicits2 {
 
@@ -11,12 +13,15 @@ object Implicits2 {
    */
   implicit class EntityBuilder(tmpl: Template) {
     
-    def asEntity[T : Recoverable]: T = {
-      val params = tmpl.data.map( d => (d.name, d.value))
-      
-      val item = implicitly[Recoverable[T]].fromParams(params)
-      
-      item
+    def asEntity[T : Recoverable]: Either[Issue, T] = {
+      try {
+        val params = tmpl.data.filter( d => d.value.isDefined ).map( d => (d.name, d.value.get))
+        
+        Right(implicitly[Recoverable[T]].fromParams(params))
+      } catch {
+        case e: NoSuchElementException =>
+          Left(MissingFieldIssue())
+      }
     }
   }
   

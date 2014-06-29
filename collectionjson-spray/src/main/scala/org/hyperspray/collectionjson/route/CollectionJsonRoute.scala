@@ -2,19 +2,20 @@ package org.hyperspray.collectionjson.route
 
 import java.net.URI
 import org.collectionjson.Builder
+import org.collectionjson.Issue
 import org.collectionjson.macros._
 import org.collectionjson.macros.Convertable._
 import org.collectionjson.macros.Recoverable._
 import org.collectionjson.model._
 import org.hyperspray.collectionjson.route.CollectionJsonProtocol._
+import spray.http._
+import spray.http.HttpHeaders._
+import spray.http.MediaTypes._
 import spray.httpx.SprayJsonSupport._
 import spray.routing.Directives
-import spray.http.MediaTypes._
-import spray.http.MediaType
-import spray.http.HttpHeaders._
-import spray.http.StatusCodes
+import spray.routing.Route
 
-object CollectionJsonDirective extends Directives {
+object CollectionJsonRoute extends Directives {
   
   val `application/vnd.collection+json` = register(
     MediaType.custom(
@@ -39,14 +40,20 @@ object CollectionJsonDirective extends Directives {
   /**
    * returns new ID
    */
-  private def addItem[T : Recoverable](href: URI, service: CollectionJsonService[T], template: Template): String = {
+  private def addItem[T : Recoverable](href: URI, service: CollectionJsonService[T], template: Template): Either[Issue, String] = {
     import org.collectionjson.Implicits2._
     
-    val ent = template.asEntity[T]
-    service.addItem(ent)
+    val maybeEnt = template.asEntity[T]
+    
+    maybeEnt fold (
+      (error) => Left(error),
+      (entity) =>
+        Right(service.addItem(entity))
+    )
+    
   }
   
-  def route[T : Convertable : Recoverable](baseHref: URI, service: CollectionJsonService[T]) =
+  def apply[T : Convertable : Recoverable](baseHref: URI, service: CollectionJsonService[T]): Route =
     path(cleanPath(baseHref) / Segment) { id =>
       respondWithMediaType(`application/vnd.collection+json`) {
         get {
@@ -66,11 +73,16 @@ object CollectionJsonDirective extends Directives {
         post {
           entity(as[Commands.AddItemCommand]) { cmd =>
             
-            val newId = addItem(baseHref, service, cmd.template)
+            val tryNewId = addItem(baseHref, service, cmd.template)
             
-            respondWithHeader(`Location`(s"$baseHref/$newId")) {
-              complete(StatusCodes.Created, "")
-            }  
+            tryNewId match {
+              case Right(newId) => 
+                respondWithHeader(`Location`(s"$baseHref/$newId")) {
+                  complete(StatusCodes.Created, "")
+                }
+              case Left(issue) =>
+                complete(StatusCodes.BadRequest, issue.error)
+            }
           }
         }
       }

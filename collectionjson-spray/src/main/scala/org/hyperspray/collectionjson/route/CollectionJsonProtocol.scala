@@ -6,6 +6,7 @@ import spray.json.JsonFormat
 import java.net.URI
 import spray.json.JsString
 import spray.json.JsValue
+import spray.json.JsNumber
 
 object CollectionJsonProtocol extends DefaultJsonProtocol {
 
@@ -17,7 +18,10 @@ object CollectionJsonProtocol extends DefaultJsonProtocol {
   //TODO handle more cases
   implicit val anyFormat = new JsonFormat[Any] {
     def write(o:Any) = JsString(o.toString())
-    def read(value:JsValue) = value.toString()    
+    def read(value:JsValue) = value match  {
+      case s: JsString => s.convertTo[String]
+      case v: JsNumber => v.convertTo[Int]  
+    }
   }
   
   implicit val queryDataFormat = jsonFormat2(QueryData)
