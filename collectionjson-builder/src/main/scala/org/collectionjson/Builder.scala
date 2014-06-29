@@ -2,7 +2,7 @@ package org.collectionjson
 
 import java.net.URI
 import org.collectionjson.model._
-import org.collectionjson.Implicits._
+import org.collectionjson.FromEntityConversion._
 import org.collectionjson.macros._
 
 object Builder {

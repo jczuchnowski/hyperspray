@@ -41,7 +41,7 @@ object CollectionJsonRoute extends Directives {
    * returns new ID
    */
   private def addItem[T : Recoverable](href: URI, service: CollectionJsonService[T], template: Template): Either[Issue, String] = {
-    import org.collectionjson.Implicits2._
+    import org.collectionjson.ToEntityConversion._
     
     val maybeEnt = template.asEntity[T]
     

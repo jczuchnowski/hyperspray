@@ -7,15 +7,13 @@ import org.collectionjson.model.Properties._
 import scala.language.implicitConversions
 import java.net.URI
 
-object Implicits {
+object FromEntityConversion {
 
   /**
    * Implicit conversion from any case class to a Seq of paramName -> paramValue pairs.
    */
   implicit def itemToPairs[T: Convertable](t: T): Seq[(String, Any)] = implicitly[Convertable[T]].toParamSeq(t)
 
-  //implicit def paramsToItem[T : Convertable](p: Seq[(String, Any)]) = implicitly[Convertable[T]].fromParams(p)
-  
   /**
    * Implicit builder of a CollectionJSON Item.
    */
@@ -39,20 +37,6 @@ object Implicits {
       Item(href = itemUri, data = data)
     }
   }
-  
-  /**
-   * Implicit case class builder from a Template .
-   */
-//  implicit class EntityBuilder(tmpl: Template) {
-//    
-//    def asEntity[T : Convertable]: T = {
-//      val params = tmpl.data.map( d => (d.name, d.value))
-//      
-//      val item = implicitly[Convertable[T]].fromParams(params)
-//      
-//      item
-//    }
-//  }
   
   implicit class RichCollectionJson(cj: CollectionJson) {
     

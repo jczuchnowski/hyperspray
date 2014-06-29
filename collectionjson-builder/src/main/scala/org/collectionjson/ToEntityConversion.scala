@@ -6,7 +6,7 @@ import org.collectionjson.model.Template
 import scala.util.Try
 import scala.util.Either
 
-object Implicits2 {
+object ToEntityConversion {
 
   /**
    * Implicit case class builder from a Template .
