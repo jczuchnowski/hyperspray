@@ -1,12 +1,8 @@
 package org.hyperspray.collectionjson.route
 
-import org.collectionjson.model._
-import spray.json.DefaultJsonProtocol
-import spray.json.JsonFormat
 import java.net.URI
-import spray.json.JsString
-import spray.json.JsValue
-import spray.json.JsNumber
+import org.collectionjson.model._
+import spray.json._
 
 object CollectionJsonProtocol extends DefaultJsonProtocol {
 

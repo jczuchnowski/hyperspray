@@ -1,9 +1,9 @@
 package org.collectionjson
 
 import java.net.URI
-import org.collectionjson.model._
 import org.collectionjson.FromEntityConversion._
 import org.collectionjson.macros._
+import org.collectionjson.model._
 
 object Builder {
 

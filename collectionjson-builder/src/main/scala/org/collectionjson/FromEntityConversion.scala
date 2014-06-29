@@ -1,11 +1,11 @@
 package org.collectionjson
 
+import java.net.URI
 import org.collectionjson.macros._
 import org.collectionjson.macros.Convertable._
 import org.collectionjson.model._
 import org.collectionjson.model.Properties._
 import scala.language.implicitConversions
-import java.net.URI
 
 object FromEntityConversion {
 

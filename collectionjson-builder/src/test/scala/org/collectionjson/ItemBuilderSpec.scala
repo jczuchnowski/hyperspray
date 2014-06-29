@@ -1,10 +1,10 @@
 package org.collectionjson
 
+import java.net.URI
+import org.collectionjson.FromEntityConversion._
+import org.collectionjson.macros._
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
-import java.net.URI
-import org.collectionjson.macros._
-import org.collectionjson.Implicits._
 
 class ItemBuilderSpec extends FlatSpec with Matchers {
   

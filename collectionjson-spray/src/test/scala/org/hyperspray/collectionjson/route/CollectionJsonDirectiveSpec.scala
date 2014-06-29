@@ -1,18 +1,18 @@
 package org.hyperspray.collectionjson.route
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import spray.testkit.ScalatestRouteTest
-import spray.routing.HttpService
-import org.collectionjson.macros.Recoverable
-import org.collectionjson.macros.Convertable
 import CollectionJsonRoute.`application/vnd.collection+json`
 import java.net.URI
-import spray.http.StatusCodes._
+import org.collectionjson.FromEntityConversion._
+import org.collectionjson.macros.Convertable
+import org.collectionjson.macros.Recoverable
+import org.scalatest.FlatSpec
+import org.scalatest.Matchers
 import spray.http.HttpEntity
-import org.collectionjson.Implicits._
-import spray.http.MediaTypes._
 import spray.http.HttpHeaders._
+import spray.http.MediaTypes._
+import spray.http.StatusCodes._
+import spray.routing.HttpService
+import spray.testkit.ScalatestRouteTest
 
 class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestRouteTest with HttpService {
 

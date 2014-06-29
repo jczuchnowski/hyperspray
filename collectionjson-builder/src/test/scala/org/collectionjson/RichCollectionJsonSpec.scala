@@ -1,12 +1,12 @@
 package org.collectionjson
 
-import org.scalatest.FlatSpec
-import org.scalatest.Matchers
-import org.collectionjson.Implicits._
+import java.net.URI
+import org.collectionjson.FromEntityConversion._
 import org.collectionjson.macros._
 import org.collectionjson.model._
 import org.collectionjson.model.Properties._
-import java.net.URI
+import org.scalatest.FlatSpec
+import org.scalatest.Matchers
 
 class RichCollectionJsonSpec extends FlatSpec with Matchers {
 

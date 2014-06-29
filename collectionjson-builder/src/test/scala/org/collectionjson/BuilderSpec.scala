@@ -1,9 +1,9 @@
 package org.collectionjson
 
 import java.net.URI
+import org.collectionjson.macros._
 import org.collectionjson.model._
 import org.scalatest.FlatSpec
-import org.collectionjson.macros._
 import org.scalatest.Matchers
 import scala.language.postfixOps
 
