@@ -2,6 +2,8 @@
 
 Hypermedia-centric microservices framework for Scala.
 
+[![Build Status](https://travis-ci.org/jczuchnowski/hyperspray.png?branch=master)](https://travis-ci.org/jczuchnowski/hyperspray)
+
 Target for v.0.1:
 
 * support for Collection+JSON media type including:
