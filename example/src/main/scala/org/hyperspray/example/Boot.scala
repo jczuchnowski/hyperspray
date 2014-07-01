@@ -5,7 +5,7 @@ import akka.actor.Props
 import akka.io.IO
 import spray.can.Http
 
-class Boot extends App {
+object Boot extends App {
 	
   implicit val system = ActorSystem("example-actor-system")
     

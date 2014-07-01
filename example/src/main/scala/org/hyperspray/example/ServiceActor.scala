@@ -16,21 +16,13 @@ import org.collectionjson.macros.Recoverable
 import org.hyperspray.collectionjson.route.CollectionJsonRoute
 import org.hyperspray.collectionjson.route.CollectionJsonService
 
-class ServiceActor() extends Actor with ActorLogging with HttpService {
+class ServiceActor extends Actor with ActorLogging with HttpService {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
   def actorRefFactory = context
 
   implicit def executionContext: ExecutionContext = context.dispatcher
-
-  implicit def myExceptionHandler(implicit log: LoggingContext) = ExceptionHandler {
-    case e: Throwable => ctx => {
-      log.error("Request {} could not be handled normally", ctx.request)
-      log.error(e, "Server error")
-      ctx.complete(InternalServerError, "Error - we've messed up something!!!")
-    }
-  }
   
   case class TestItem(id: String, name: String, age: Int)
   
@@ -38,7 +30,7 @@ class ServiceActor() extends Actor with ActorLogging with HttpService {
   
   def service = new CollectionJsonService[TestItem] {
     
-    var items = Seq(TestItem("123", "qwe", 10))
+    var items = Seq(TestItem("1", "qwe", 10), TestItem("2", "asd", 20))
     
     override def getItems: Seq[TestItem] = items
     
@@ -51,13 +43,9 @@ class ServiceActor() extends Actor with ActorLogging with HttpService {
     }
   }
   
-  // this actor only runs our route, but you could add
-  // other things here, like request stream processing
-  // or timeout handling
-  def receive = 
-    runRoute(
-      CollectionJsonRoute(baseHref, service)
-    )
+  def receive = runRoute(
+    CollectionJsonRoute(baseHref, service)
+  )
   
   implicit val timeout: Timeout = Timeout(2.seconds)
   
