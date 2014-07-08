@@ -47,7 +47,6 @@ class BuilderSpec extends FlatSpec with Matchers {
     val expected = Some(
       Template(
         Seq(
-          Data(None, "id", None), 
           Data(None, "name", None), 
           Data(None, "age", None)
         )
