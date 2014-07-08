@@ -19,13 +19,13 @@ class BuilderSpec extends FlatSpec with Matchers {
     TestItem("id3", "name3", 33))
   
   "A CollectionJson Builder" should "create minimal CollectionJson" in {    
-    val coll = Builder.newCollectionJson(href, Seq.empty[Unit])
+    val coll = Builder.newCollectionJson(href, Seq.empty[Unit], "id")
     
     assert( coll == CollectionJson(Collection("1.0", href, Seq.empty, Seq.empty, Seq.empty, None, None)))
   }
   
   it should "create CollectionJson with Items" in {
-    val coll = Builder.newCollectionJson(href, testItems)
+    val coll = Builder.newCollectionJson(href, testItems, "id")
 
     val items = coll.collection.items
     
@@ -40,7 +40,7 @@ class BuilderSpec extends FlatSpec with Matchers {
   }
   
   it should "create CollectionJson with Template" in {
-    val coll = Builder.newCollectionJson(href, testItems)
+    val coll = Builder.newCollectionJson(href, testItems, "id")
 
     val template = coll.collection.template
     

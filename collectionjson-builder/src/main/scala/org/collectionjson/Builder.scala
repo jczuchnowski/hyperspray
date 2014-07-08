@@ -7,13 +7,13 @@ import org.collectionjson.model._
 
 object Builder {
 
-  def newCollectionJson[T: Convertable](href: URI, items: Seq[T]): CollectionJson = {
+  def newCollectionJson[T: Convertable](href: URI, items: Seq[T], idField: String): CollectionJson = {
     
     val convItems = itemsWithData(href, items)
     
     val template = {
       val templateData = items.headOption map { item =>
-        templateWithData(href, item)
+        templateWithData(href, item, idField)
       }
       
       templateData map { Template }
@@ -24,16 +24,19 @@ object Builder {
     )
   }
   
-  def newCollectionJson[T : Convertable](href: URI, item: T): CollectionJson =
-    newCollectionJson(href, Seq(item))
+  def newCollectionJson[T : Convertable](href: URI, item: T, idField: String): CollectionJson =
+    newCollectionJson(href, Seq(item), idField)
   
   private[this] def itemsWithData[T : Convertable](href: URI, items: Seq[T]) = items.map(_.asItem(href))
   
   //TODO could this be done without passing in any instance - only type ?
   // then the signature would be 'def templateWithData[T]: Seq[Data]
-  private[this] def templateWithData[T : Convertable](href: URI, item: T): Seq[Data] = {
+  private[this] def templateWithData[T : Convertable](href: URI, item: T, idField: String): Seq[Data] = {
     val it = item.asItem(href)
-    it.data.map(_.copy(value = None))
+    
+    //remove the id field from the template
+    val tmplIt = it.copy(data = it.data.filter(_.name != idField))
+   tmplIt.data.map(_.copy(value = None))
   }
   
 }

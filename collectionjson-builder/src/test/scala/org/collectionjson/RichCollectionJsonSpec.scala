@@ -17,7 +17,7 @@ class RichCollectionJsonSpec extends FlatSpec with Matchers {
   
   "A RichCollectionJson" should "add new profile link" in {
     
-    val cj = Builder.newCollectionJson[TestItem](new URI(baseHref), Seq.empty).
+    val cj = Builder.newCollectionJson[TestItem](new URI(baseHref), Seq.empty, "id").
       withProfileLink(new URI(profileLink))
     
     cj.collection.links shouldBe Seq(Link(href = new URI(profileLink), rel = Profile.rel))

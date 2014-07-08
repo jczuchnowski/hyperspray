@@ -4,6 +4,8 @@ import scala.concurrent.Future
 
 trait CollectionJsonService[T] {
 
+  def idField: String = "id"
+  
   def getItems: Seq[T]
   
   //TODO make id generic

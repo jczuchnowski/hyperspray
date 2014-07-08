@@ -28,13 +28,13 @@ object CollectionJsonRoute extends Directives {
   private def getCollection[T : Convertable](href: URI, service: CollectionJsonService[T]): CollectionJson = {
     val items = service.getItems
     
-    Builder.newCollectionJson(href, items)
+    Builder.newCollectionJson(href, items, service.idField)
   }
   
   private def getItem[T : Convertable](href: URI, service: CollectionJsonService[T], id: String): Option[CollectionJson] = {
     val item = service.getItem(id)
     
-    item.map { Builder.newCollectionJson(href, _) }
+    item.map { it => Builder.newCollectionJson(href, it, service.idField) }
   }
   
   /**
