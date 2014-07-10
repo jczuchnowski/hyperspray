@@ -7,7 +7,7 @@ import org.collectionjson.model._
 
 object Builder {
 
-  def newCollectionJson[T: Convertable](href: URI, items: Seq[T], idField: String): CollectionJson = {
+  def newCollectionJson[T: Convertable](href: URI, items: Seq[T], idField: String, searchFields: List[String] = Nil): CollectionJson = {
     
     val convItems = itemsWithData(href, items)
     
@@ -19,8 +19,10 @@ object Builder {
       templateData map { Template }
     }
     
+    val queries = if (!searchFields.isEmpty) Seq(searchQuery(href, searchFields)) else Seq()
+    
     CollectionJson(
-      Collection(href = href, items = convItems, template = template)
+      Collection(href = href, items = convItems, template = template, queries = queries)
     )
   }
   
@@ -32,11 +34,23 @@ object Builder {
   //TODO could this be done without passing in any instance - only type ?
   // then the signature would be 'def templateWithData[T]: Seq[Data]
   private[this] def templateWithData[T : Convertable](href: URI, item: T, idField: String): Seq[Data] = {
-    val it = item.asItem(href)
+    val it = item asItem href
     
     //remove the id field from the template
     val tmplIt = it.copy(data = it.data.filter(_.name != idField))
-   tmplIt.data.map(_.copy(value = None))
+   tmplIt.data map { _.copy(value = None) }
+  }
+  
+  private[this] def searchQuery(href: URI, queryFor: List[String]): Query = {
+    // make sure the URI ends with a slash
+    val searchUri = (if (href.toString().endsWith("/")) {
+      href
+    } else {
+      new URI(href.toString() + "/")
+    }).resolve("search")
+
+    val data = queryFor map { QueryData(_, "")}
+    Query(href = searchUri, rel = "search", data = data)
   }
   
 }
