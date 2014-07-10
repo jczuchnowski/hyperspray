@@ -7,7 +7,7 @@ import org.collectionjson.model._
 
 object Builder {
 
-  def newCollectionJson[T: Convertable](href: URI, items: Seq[T], idField: String, searchFields: List[String] = Nil): CollectionJson = {
+  def newCollectionJson[T: Convertable](href: URI, items: Seq[T], idField: String): CollectionJson = {
     
     val convItems = itemsWithData(href, items)
     
@@ -19,10 +19,8 @@ object Builder {
       templateData map { Template }
     }
     
-    val queries = if (!searchFields.isEmpty) Seq(searchQuery(href, searchFields)) else Seq()
-    
     CollectionJson(
-      Collection(href = href, items = convItems, template = template, queries = queries)
+      Collection(href = href, items = convItems, template = template)
     )
   }
   
@@ -40,17 +38,5 @@ object Builder {
     val tmplIt = it.copy(data = it.data.filter(_.name != idField))
    tmplIt.data map { _.copy(value = None) }
   }
-  
-  private[this] def searchQuery(href: URI, queryFor: List[String]): Query = {
-    // make sure the URI ends with a slash
-    val searchUri = (if (href.toString().endsWith("/")) {
-      href
-    } else {
-      new URI(href.toString() + "/")
-    }).resolve("search")
-
-    val data = queryFor map { QueryData(_, "")}
-    Query(href = searchUri, rel = "search", data = data)
-  }
-  
+    
 }

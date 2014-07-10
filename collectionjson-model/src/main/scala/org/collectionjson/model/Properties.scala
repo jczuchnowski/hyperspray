@@ -13,6 +13,10 @@ object Properties {
     val rel = "profile"
   }
   
+  case object Search extends Rel {
+    val rel = "search"
+  }
+  
   
   /**
    *  Render property

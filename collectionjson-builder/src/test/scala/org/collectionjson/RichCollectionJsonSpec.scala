@@ -22,4 +22,11 @@ class RichCollectionJsonSpec extends FlatSpec with Matchers {
     
     cj.collection.links shouldBe Seq(Link(href = new URI(profileLink), rel = Profile.rel))
   }
+  
+  it should "add search query" in {
+    val cj = Builder.newCollectionJson[TestItem](new URI(baseHref), Seq.empty, "id").
+      withSearchQuery(List("name", "age"))
+    
+    cj.collection.queries shouldBe Seq(Query(href = new URI(baseHref + "/search"), rel = Search.rel, data = Seq(QueryData("name", ""), QueryData("age", ""))))    
+  }
 }

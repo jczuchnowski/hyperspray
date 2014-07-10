@@ -25,6 +25,7 @@ object FromEntityConversion {
       val data = params.map( p => Data(name = p._1, value = Some(p._2)))
       
       // take the first parameter as an ID
+      //TODO
       val idVal = params.headOption.map( p => p._2.toString()).getOrElse("")
       
       // make sure the URI ends with a slash
@@ -44,6 +45,22 @@ object FromEntityConversion {
       val newLinks = cj.collection.links :+ Link(href = href, rel = Profile.rel)
       
       CollectionJson(cj.collection.copy(links = newLinks))
+    }
+    
+    def withSearchQuery(searchFields: List[String]): CollectionJson = {
+      val uri = cj.collection.href
+      
+      val searchUri = (if (uri.toString().endsWith("/")) {
+        uri
+      } else {
+        new URI(uri.toString() + "/")
+      }).resolve("search")
+      
+      val data = searchFields map { QueryData(_, "")}
+      
+      val searchQuery = Query(href = searchUri, rel = "search", data = data)
+      
+      CollectionJson(cj.collection.copy(queries = cj.collection.queries :+ searchQuery))
     }
   }
 }
