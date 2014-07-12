@@ -1,4 +1,4 @@
-package org.collectionjson
+package org.hyperspray.cj
 
 sealed trait Issue {
   def error: String

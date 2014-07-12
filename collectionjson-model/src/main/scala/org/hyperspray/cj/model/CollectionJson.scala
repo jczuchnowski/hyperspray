@@ -1,4 +1,4 @@
-package org.collectionjson.model
+package org.hyperspray.cj.model
 
 import java.net.URI
 

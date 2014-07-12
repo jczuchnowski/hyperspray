@@ -1,12 +1,14 @@
-package org.hyperspray.collectionjson.route
+package org.hyperspray.cj.route
 
 import CollectionJsonRoute.`application/vnd.collection+json`
 import java.net.URI
-import org.collectionjson.FromEntityConversion._
-import org.collectionjson.macros.Convertable
-import org.collectionjson.macros.Recoverable
+
+import org.hyperspray.cj.FromEntityConversion._
+import org.hyperspray.macros.Convertable
+import org.hyperspray.macros.Recoverable
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
+
 import spray.http.HttpEntity
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes._

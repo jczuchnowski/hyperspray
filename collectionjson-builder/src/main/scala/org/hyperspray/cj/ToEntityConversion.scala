@@ -1,8 +1,8 @@
-package org.collectionjson
+package org.hyperspray.cj
 
-import org.collectionjson.macros._
-import org.collectionjson.macros.Recoverable._
-import org.collectionjson.model.Template
+import org.hyperspray.macros._
+import org.hyperspray.macros.Recoverable._
+import org.hyperspray.cj.model.Template
 import scala.util.Try
 import scala.util.Either
 

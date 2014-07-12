@@ -1,7 +1,7 @@
-package org.hyperspray.collectionjson.route
+package org.hyperspray.cj.route
 
 import java.net.URI
-import org.collectionjson.model._
+import org.hyperspray.cj.model._
 import spray.json._
 
 object CollectionJsonProtocol extends DefaultJsonProtocol {

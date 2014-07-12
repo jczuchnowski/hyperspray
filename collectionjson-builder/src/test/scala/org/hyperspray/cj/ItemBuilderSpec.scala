@@ -1,8 +1,9 @@
-package org.collectionjson
+package org.hyperspray.cj
 
 import java.net.URI
-import org.collectionjson.FromEntityConversion._
-import org.collectionjson.macros._
+
+import org.hyperspray.cj.FromEntityConversion._
+import org.hyperspray.macros._
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 

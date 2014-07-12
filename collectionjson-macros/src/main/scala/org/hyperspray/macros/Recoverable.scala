@@ -1,4 +1,4 @@
-package org.collectionjson.macros
+package org.hyperspray.macros
 
 import scala.language.experimental.macros
 import scala.reflect.macros.Context

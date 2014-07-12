@@ -1,10 +1,10 @@
-package org.collectionjson
+package org.hyperspray.cj
 
 import java.net.URI
-import org.collectionjson.macros._
-import org.collectionjson.macros.Convertable._
-import org.collectionjson.model._
-import org.collectionjson.model.Properties._
+import org.hyperspray.macros._
+import org.hyperspray.macros.Convertable._
+import org.hyperspray.cj.model._
+import org.hyperspray.cj.model.Properties._
 import scala.language.implicitConversions
 
 object FromEntityConversion {

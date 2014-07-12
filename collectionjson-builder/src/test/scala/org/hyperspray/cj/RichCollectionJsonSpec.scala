@@ -1,10 +1,12 @@
-package org.collectionjson
+package org.hyperspray.cj
 
 import java.net.URI
-import org.collectionjson.FromEntityConversion._
-import org.collectionjson.macros._
-import org.collectionjson.model._
-import org.collectionjson.model.Properties._
+
+import org.hyperspray.cj.FromEntityConversion._
+import org.hyperspray.macros._
+import org.hyperspray.cj.model._
+import org.hyperspray.cj.model.Properties._
+import org.hyperspray.cj.Builder;
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 

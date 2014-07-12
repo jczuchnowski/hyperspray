@@ -1,11 +1,11 @@
-package org.collectionjson
+package org.hyperspray.cj
 
 import java.net.URI
-import org.collectionjson.FromEntityConversion._
-import org.collectionjson.macros._
-import org.collectionjson.macros.Convertable._
-import org.collectionjson.model.CollectionJson
-import org.collectionjson.model.Item
+import org.hyperspray.cj.FromEntityConversion._
+import org.hyperspray.macros._
+import org.hyperspray.macros.Convertable._
+import org.hyperspray.cj.model.CollectionJson
+import org.hyperspray.cj.model.Item
 
 case class Person(name: String, age: Int)
 

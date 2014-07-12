@@ -10,11 +10,11 @@ import spray.http._
 import spray.http.MediaTypes._
 import spray.http.StatusCodes._
 import spray.util.LoggingContext
-import org.collectionjson.FromEntityConversion._
-import org.collectionjson.macros.Convertable
-import org.collectionjson.macros.Recoverable
-import org.hyperspray.collectionjson.route.CollectionJsonRoute
-import org.hyperspray.collectionjson.route.CollectionJsonService
+import org.hyperspray.cj.FromEntityConversion._
+import org.hyperspray.macros.Convertable
+import org.hyperspray.macros.Recoverable
+import org.hyperspray.cj.route.CollectionJsonRoute
+import org.hyperspray.cj.route.CollectionJsonService
 
 class ServiceActor extends Actor with ActorLogging with HttpService {
 

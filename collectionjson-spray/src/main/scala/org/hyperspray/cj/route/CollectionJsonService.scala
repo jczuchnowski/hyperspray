@@ -1,4 +1,4 @@
-package org.hyperspray.collectionjson.route
+package org.hyperspray.cj.route
 
 import scala.concurrent.Future
 

@@ -1,13 +1,15 @@
-package org.hyperspray.collectionjson.route
+package org.hyperspray.cj.route
 
 import java.net.URI
-import org.collectionjson.Builder
-import org.collectionjson.Issue
-import org.collectionjson.macros._
-import org.collectionjson.macros.Convertable._
-import org.collectionjson.macros.Recoverable._
-import org.collectionjson.model._
-import org.hyperspray.collectionjson.route.CollectionJsonProtocol._
+
+import org.hyperspray.cj.Builder
+import org.hyperspray.cj.Issue
+import org.hyperspray.macros._
+import org.hyperspray.macros.Convertable._
+import org.hyperspray.macros.Recoverable._
+import org.hyperspray.cj.model._
+import org.hyperspray.cj.route.CollectionJsonProtocol._
+
 import spray.http._
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes._
@@ -41,7 +43,8 @@ object CollectionJsonRoute extends Directives {
    * returns new ID
    */
   private def addItem[T : Recoverable](href: URI, service: CollectionJsonService[T], template: Template): Either[Issue, String] = {
-    import org.collectionjson.ToEntityConversion._
+
+    import org.hyperspray.cj.ToEntityConversion._
     
     val maybeEnt = template.asEntity[T]
     
