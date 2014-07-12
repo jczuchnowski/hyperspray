@@ -6,7 +6,6 @@ import org.hyperspray.cj.FromEntityConversion._
 import org.hyperspray.macros._
 import org.hyperspray.cj.model._
 import org.hyperspray.cj.model.Properties._
-import org.hyperspray.cj.Builder;
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 

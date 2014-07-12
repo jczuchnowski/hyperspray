@@ -4,7 +4,6 @@ import java.net.URI
 
 import org.hyperspray.macros._
 import org.hyperspray.cj.model._
-import org.hyperspray.cj.Builder;
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
