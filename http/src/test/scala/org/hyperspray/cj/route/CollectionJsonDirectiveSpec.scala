@@ -28,11 +28,11 @@ class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestR
     
     var items = Seq(TestItem("123", "qwe", 10))
     
-    override def getItems: Seq[TestItem] = items
+    override def getAll: Seq[TestItem] = items
     
-    override def getItem(id: String): Option[TestItem] = items.filter(_.id == id).headOption
+    override def getById(id: String): Option[TestItem] = items.filter(_.id == id).headOption
     
-    override def addItem(item: TestItem): String = {
+    override def add(item: TestItem): String = {
       val newId = "124"
       items = items :+ item.copy(id = newId)
       newId

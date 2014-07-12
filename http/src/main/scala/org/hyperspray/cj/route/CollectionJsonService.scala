@@ -2,15 +2,15 @@ package org.hyperspray.cj.route
 
 import scala.concurrent.Future
 
-trait CollectionJsonService[T] {
+trait CollectionJsonService[Entity] {
 
   def idField: String = "id"
   
-  def getItems: Seq[T]
+  def getAll: Seq[Entity]
   
   //TODO make id generic
-  def getItem(id: String): Option[T]
+  def getById(id: String): Option[Entity]
   
   // returns the new id
-  def addItem(item: T): String
+  def add(entity: Entity): String
 }

@@ -24,22 +24,22 @@ class ServiceActor extends Actor with ActorLogging with HttpService {
 
   implicit def executionContext: ExecutionContext = context.dispatcher
   
-  case class TestItem(id: String, name: String, age: Int)
+  case class TestItem(id: Int, name: String, age: Int)
   
   val baseHref = new URI("http://0.0.0.0:8080/test-items")
   
   def service = new CollectionJsonService[TestItem] {
     
-    var items = Seq(TestItem("1", "qwe", 10), TestItem("2", "asd", 20))
+    var items = Seq(TestItem(1, "qwe", 10), TestItem(2, "asd", 20))
     
-    override def getItems: Seq[TestItem] = items
+    override def getAll: Seq[TestItem] = items
     
-    override def getItem(id: String): Option[TestItem] = items.filter(_.id == id).headOption
+    override def getById(id: String): Option[TestItem] = items.filter(_.id == id.toInt).headOption
     
-    override def addItem(item: TestItem): String = {
-      val newId = "124"
+    override def add(item: TestItem): String = {
+      val newId = items.map(_.id).max + 1
       items = items :+ item.copy(id = newId)
-      newId
+      newId.toString()
     }
   }
   

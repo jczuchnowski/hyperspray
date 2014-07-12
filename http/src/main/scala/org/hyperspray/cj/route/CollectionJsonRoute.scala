@@ -28,13 +28,13 @@ object CollectionJsonRoute extends Directives {
       fileExtensions = Seq.empty))
   
   private def getCollection[T : Convertable](href: URI, service: CollectionJsonService[T]): CollectionJson = {
-    val items = service.getItems
+    val items = service.getAll
     
     Builder.newCollectionJson(href, items, service.idField)
   }
   
   private def getItem[T : Convertable](href: URI, service: CollectionJsonService[T], id: String): Option[CollectionJson] = {
-    val item = service.getItem(id)
+    val item = service.getById(id)
     
     item.map { it => Builder.newCollectionJson(href, it, service.idField) }
   }
@@ -51,7 +51,7 @@ object CollectionJsonRoute extends Directives {
     maybeEnt fold (
       (error) => Left(error),
       (entity) =>
-        Right(service.addItem(entity))
+        Right(service.add(entity))
     )
     
   }
