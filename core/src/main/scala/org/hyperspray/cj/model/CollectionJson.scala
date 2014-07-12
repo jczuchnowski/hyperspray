@@ -7,7 +7,7 @@ case class CollectionJson(collection: Collection)
 case class Collection(
     version: String = "1.0", 
     href: URI,
-    links: Seq[Link] = Seq.empty, //not supported
+    links: Seq[Link] = Seq.empty,
     items: Seq[Item] = Seq.empty,
     queries: Seq[Query] = Seq.empty,
     template: Option[Template] = None,

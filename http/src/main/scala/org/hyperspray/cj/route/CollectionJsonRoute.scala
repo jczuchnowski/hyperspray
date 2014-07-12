@@ -46,7 +46,7 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](val baseH
   }
   
   /**
-   * returns new ID
+   * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
   private def addItem(href: URI, template: Template): Either[Issue, I] = {
 
