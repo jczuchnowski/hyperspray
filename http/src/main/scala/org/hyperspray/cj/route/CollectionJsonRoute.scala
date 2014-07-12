@@ -1,7 +1,9 @@
 package org.hyperspray.cj.route
 
 import com.typesafe.scalalogging.slf4j.LazyLogging
+
 import java.net.URI
+
 import org.hyperspray.cj.Builder
 import org.hyperspray.cj.Issue
 import org.hyperspray.macros._
@@ -9,6 +11,7 @@ import org.hyperspray.macros.Convertable._
 import org.hyperspray.macros.Recoverable._
 import org.hyperspray.cj.model._
 import org.hyperspray.cj.route.CollectionJsonProtocol._
+
 import spray.http._
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes._
@@ -27,28 +30,66 @@ object CollectionJsonRoute {
       fileExtensions = Seq.empty))
 }
 
-abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](val baseHref: URI) extends Directives with LazyLogging { 
+abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](baseHref: URI) extends Directives with LazyLogging { 
   
   self: CollectionJsonService[Ent, I] =>
   
   import CollectionJsonRoute._
+    
+  val basePath = cleanPath(baseHref)
   
-  private def getCollection(href: URI): CollectionJson = {
+  lazy val route =
+    path(basePath / Segment) { id =>
+      respondWithMediaType(`application/vnd.collection+json`) {
+        get {
+          complete {
+            getItem(idFromString(id))
+          }
+        }
+      }
+    } ~
+    path(basePath) {
+      respondWithMediaType(`application/vnd.collection+json`) {
+        get {
+          complete {
+            getCollection()
+          }
+        } ~
+        post {
+          entity(as[Commands.AddItemCommand]) { cmd =>
+            
+            val tryNewId = addItem(cmd.template)
+            
+            tryNewId match {
+              case Right(newId) => 
+                respondWithHeader(`Location`(s"$baseHref/$newId")) {
+                  complete(StatusCodes.Created, "")
+                }
+              case Left(issue) =>
+                logger.debug(issue.error)
+                complete(StatusCodes.BadRequest, issue.error)
+            }
+          }
+        }
+      }
+    }
+  
+  private[this] def getCollection(): CollectionJson = {
     val items = getAll
     
-    Builder.newCollectionJson(href, items, idField)
+    Builder.newCollectionJson(baseHref, items, idField)
   }
   
-  private def getItem(href: URI, id: I): Option[CollectionJson] = {
+  private[this] def getItem(id: I): Option[CollectionJson] = {
     val item = getById(id)
     
-    item.map { it => Builder.newCollectionJson(href, it, idField) }
+    item.map { it => Builder.newCollectionJson(baseHref, it, idField) }
   }
   
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
-  private def addItem(href: URI, template: Template): Either[Issue, I] = {
+  private[this] def addItem(template: Template): Either[Issue, I] = {
 
     import org.hyperspray.cj.ToEntityConversion._
     
@@ -69,46 +110,9 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](val baseH
     )
     
   }
-  
-  lazy val route =
-    path(cleanPath(baseHref) / Segment) { id =>
-      respondWithMediaType(`application/vnd.collection+json`) {
-        get {
-          complete {
-            getItem(baseHref, idFromString(id))
-          }
-        }
-      }
-    } ~
-    path(cleanPath(baseHref)) {
-      respondWithMediaType(`application/vnd.collection+json`) {
-        get {
-          complete {
-            getCollection(baseHref)
-          }
-        } ~
-        post {
-          entity(as[Commands.AddItemCommand]) { cmd =>
-            
-            val tryNewId = addItem(baseHref, cmd.template)
-            
-            tryNewId match {
-              case Right(newId) => 
-                respondWithHeader(`Location`(s"$baseHref/$newId")) {
-                  complete(StatusCodes.Created, "")
-                }
-              case Left(issue) =>
-                logger.debug(issue.error)
-                complete(StatusCodes.BadRequest, issue.error)
-            }
-          }
-        }
-      }
-    }
-  
-  private def cleanPath(uri: URI) = if (uri.getPath().startsWith("/")) {
-    uri.getPath().drop(1)
-  } else {
-    uri.getPath()
+
+  private[this] def cleanPath(uri: URI) = {
+    val p = uri.getPath()
+    if (p.startsWith("/")) p.drop(1) else p
   }
 }
