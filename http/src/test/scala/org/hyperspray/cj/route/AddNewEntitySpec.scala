@@ -16,44 +16,14 @@ import spray.http.StatusCodes._
 import spray.routing.HttpService
 import spray.testkit.ScalatestRouteTest
 
-class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestRouteTest with HttpService {
+class AddNewEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest with HttpService {
 
   def actorRefFactory = system
   
   val baseHref = new URI("http://0.0.0.0:8080/test-items")
     
   def route = (new CollectionJsonRoute[TestItem, Int](baseHref) with ExampleService).route
-  
-  "base path GET" should "respond with application/vnd.collection+json media type" in {
-    Get("/test-items") ~> route ~> check {
-      mediaType shouldBe `application/vnd.collection+json`
-    }
-  }
-  
-  it should "respond with 200 status code" in {
-    Get("/test-items") ~> route ~> check {
-      status shouldBe OK
-    }    
-  }
-  
-  "item path GET" should "respond with application/vnd.collection+json media type" in {
-    Get("/test-items/123") ~> route ~> check {
-      mediaType shouldBe `application/vnd.collection+json`
-    }
-  }
-  
-  it should "respond with 200 status code" in {
-    Get("/test-items/123") ~> route ~> check {
-      status shouldBe OK
-    }    
-  }
-  
-  it should "respond with 404 status code" in {
-    Get("/test-items/111") ~> route ~> check {
-      status shouldBe NotFound
-    }    
-  }
-  
+
   val tmpl = HttpEntity(`application/json`, 
 """
 {"template" : {
@@ -64,6 +34,7 @@ class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestR
 }}
 """)
 
+  //template with a missing field
   val badTmpl = HttpEntity(`application/json`, 
 """
 {"template" : {
@@ -74,7 +45,7 @@ class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestR
 }}
 """)
   
-  "base path POST" should "respond with application/vnd.collection+json media type" ignore {
+  "POST template" should "respond with application/vnd.collection+json media type" ignore {
     Post("/test-items", tmpl) ~> route ~> check {
       //headers should contain (`Content-Type` -> `application/vnd.collection+json`)
       mediaType shouldBe `application/vnd.collection+json`
