@@ -20,26 +20,9 @@ class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestR
 
   def actorRefFactory = system
   
-  case class TestItem(id: String, name: String, age: Int)
-  
   val baseHref = new URI("http://0.0.0.0:8080/test-items")
-  
-  def service = new CollectionJsonService[TestItem] {
     
-    var items = Seq(TestItem("123", "qwe", 10))
-    
-    override def getAll: Seq[TestItem] = items
-    
-    override def getById(id: String): Option[TestItem] = items.filter(_.id == id).headOption
-    
-    override def add(item: TestItem): String = {
-      val newId = "124"
-      items = items :+ item.copy(id = newId)
-      newId
-    }
-  }
-  
-  def route = CollectionJsonRoute[TestItem](baseHref, service)
+  def route = (new CollectionJsonRoute[TestItem, Int](baseHref) with ExampleService).route
   
   "base path GET" should "respond with application/vnd.collection+json media type" in {
     Get("/test-items") ~> route ~> check {
@@ -75,7 +58,6 @@ class CollectionJsonDirectiveSpec extends FlatSpec with Matchers with ScalatestR
 """
 {"template" : {
     "data" : [
-        {"name" : "id", "value" : "124"},
         {"name" : "name", "value" : "Jakub"},
         {"name" : "age", "value" : 33}
     ]

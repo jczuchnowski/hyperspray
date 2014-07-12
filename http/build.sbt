@@ -19,17 +19,18 @@ libraryDependencies ++= {
   val akkaVersion = "2.3.4"
   val sprayVersion = "1.3.1"
   Seq(
-    "io.spray"                %%  "spray-can"       % sprayVersion,
-    "io.spray"                %%  "spray-routing"   % sprayVersion,
-    "io.spray"                %%  "spray-testkit"   % sprayVersion % "test",
-    "io.spray"                %%  "spray-json"      % "1.2.6",  
-    "com.typesafe.akka"       %%  "akka-actor"      % akkaVersion,
-    "com.typesafe.akka"       %%  "akka-testkit"    % akkaVersion % "test",
-    "org.slf4j"               %   "slf4j-api"       % "1.7.6",
-    "ch.qos.logback"          %   "logback-core"    % "1.1.1",
-    "ch.qos.logback"          %   "logback-classic" % "1.1.1",
-    "joda-time"               %   "joda-time"       % "2.3",
-    "org.joda"                %   "joda-convert"    % "1.4",
-    "org.scalatest"           %%  "scalatest"       % "2.2.0" % "test"
+    "io.spray"                   %%  "spray-can"           % sprayVersion,
+    "io.spray"                   %%  "spray-routing"       % sprayVersion,
+    "io.spray"                   %%  "spray-testkit"       % sprayVersion % "test",
+    "io.spray"                   %%  "spray-json"          % "1.2.6",  
+    "com.typesafe.akka"          %%  "akka-actor"          % akkaVersion,
+    "com.typesafe.akka"          %%  "akka-testkit"        % akkaVersion % "test",
+    "com.typesafe.scala-logging" %%  "scala-logging-slf4j" % "2.1.2",
+    "org.slf4j"                  %   "slf4j-api"           % "1.7.6",
+    "ch.qos.logback"             %   "logback-core"        % "1.1.1",
+    "ch.qos.logback"             %   "logback-classic"     % "1.1.1",
+    "joda-time"                  %   "joda-time"           % "2.3",
+    "org.joda"                   %   "joda-convert"        % "1.4",
+    "org.scalatest"              %%  "scalatest"           % "2.2.0" % "test"
   )
 }

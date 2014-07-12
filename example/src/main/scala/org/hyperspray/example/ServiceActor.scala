@@ -24,12 +24,12 @@ class ServiceActor extends Actor with ActorLogging with HttpService {
 
   implicit def executionContext: ExecutionContext = context.dispatcher
     
-  val baseHref = new URI("http://0.0.0.0:8080/test-items")
+  val baseURL = new URI("http://0.0.0.0:8080/test-items")
   
-  def service = new ExampleService
+  val testItemRoute = new CollectionJsonRoute[TestItem, Int](baseURL) with ExampleService
   
   def receive = runRoute(
-    CollectionJsonRoute(baseHref, service)
+    testItemRoute.route
   )
   
   implicit val timeout: Timeout = Timeout(2.seconds)
