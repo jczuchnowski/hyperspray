@@ -37,37 +37,39 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
   import CollectionJsonRoute._
     
   lazy val route =
-    hostName { hName =>
-      lazy val baseHref = new URI(s"http://$hName/$basePath")
-      path(basePath / Segment) { id =>
-        respondWithMediaType(`application/vnd.collection+json`) {
-          get {
-            complete {
-              getItem(baseHref, idFromString(id))
+    schemeName { sName =>
+      hostName { hName =>
+        lazy val baseHref = new URI(s"$sName://$hName/$basePath")
+        path(basePath / Segment) { id =>
+          respondWithMediaType(`application/vnd.collection+json`) {
+            get {
+              complete {
+                getItem(baseHref, idFromString(id))
+              }
             }
           }
-        }
-      } ~
-      path(basePath) {
-        respondWithMediaType(`application/vnd.collection+json`) {
-          get {
-            complete {
-              getCollection(baseHref)
-            }
-          } ~
-          post {
-            entity(as[Commands.AddItemCommand]) { cmd =>
+        } ~
+        path(basePath) {
+          respondWithMediaType(`application/vnd.collection+json`) {
+            get {
+              complete {
+                getCollection(baseHref)
+              }
+            } ~
+            post {
+              entity(as[Commands.AddItemCommand]) { cmd =>
             
-              val tryNewId = addItem(cmd.template)
+                val tryNewId = addItem(cmd.template)
             
-              tryNewId match {
-                case Right(newId) => 
-                  respondWithHeader(`Location`(s"$baseHref/$newId")) {
-                    complete(StatusCodes.Created, "")
-                  }
-                case Left(issue) =>
-                  logger.debug(issue.error)
-                  complete(StatusCodes.BadRequest, issue.error)
+                tryNewId match {
+                  case Right(newId) => 
+                    respondWithHeader(`Location`(s"$baseHref/$newId")) {
+                      complete(StatusCodes.Created, "")
+                    }
+                  case Left(issue) =>
+                    logger.debug(issue.error)
+                    complete(StatusCodes.BadRequest, issue.error)
+                }
               }
             }
           }
