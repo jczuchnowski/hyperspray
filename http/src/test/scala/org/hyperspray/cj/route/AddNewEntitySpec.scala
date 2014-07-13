@@ -20,9 +20,9 @@ class AddNewEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest wi
 
   def actorRefFactory = system
   
-  val baseHref = new URI("http://0.0.0.0:8080/test-items")
+  val basePath = "test-items"
     
-  def route = (new CollectionJsonRoute[TestItem, Int](baseHref) with ExampleService).route
+  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with ExampleService).route
 
   val tmpl = HttpEntity(`application/json`, 
 """
@@ -66,7 +66,7 @@ class AddNewEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest wi
   
   it should "respond with a location header" in {
     Post("/test-items", tmpl) ~> route ~> check {
-      headers should contain (`Location`("http://0.0.0.0:8080/test-items/124"))
+      headers should contain (`Location`("http://example.com/test-items/124"))
     }
   }
 

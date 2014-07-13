@@ -30,57 +30,58 @@ object CollectionJsonRoute {
       fileExtensions = Seq.empty))
 }
 
-abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](baseHref: URI) extends Directives with LazyLogging { 
+abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String) extends Directives with LazyLogging { 
   
   self: CollectionJsonService[Ent, I] =>
   
   import CollectionJsonRoute._
     
-  val basePath = cleanPath(baseHref)
-  
   lazy val route =
-    path(basePath / Segment) { id =>
-      respondWithMediaType(`application/vnd.collection+json`) {
-        get {
-          complete {
-            getItem(idFromString(id))
+    hostName { hName =>
+      lazy val baseHref = new URI(s"http://$hName/$basePath")
+      path(basePath / Segment) { id =>
+        respondWithMediaType(`application/vnd.collection+json`) {
+          get {
+            complete {
+              getItem(baseHref, idFromString(id))
+            }
           }
         }
-      }
-    } ~
-    path(basePath) {
-      respondWithMediaType(`application/vnd.collection+json`) {
-        get {
-          complete {
-            getCollection()
-          }
-        } ~
-        post {
-          entity(as[Commands.AddItemCommand]) { cmd =>
+      } ~
+      path(basePath) {
+        respondWithMediaType(`application/vnd.collection+json`) {
+          get {
+            complete {
+              getCollection(baseHref)
+            }
+          } ~
+          post {
+            entity(as[Commands.AddItemCommand]) { cmd =>
             
-            val tryNewId = addItem(cmd.template)
+              val tryNewId = addItem(cmd.template)
             
-            tryNewId match {
-              case Right(newId) => 
-                respondWithHeader(`Location`(s"$baseHref/$newId")) {
-                  complete(StatusCodes.Created, "")
-                }
-              case Left(issue) =>
-                logger.debug(issue.error)
-                complete(StatusCodes.BadRequest, issue.error)
+              tryNewId match {
+                case Right(newId) => 
+                  respondWithHeader(`Location`(s"$baseHref/$newId")) {
+                    complete(StatusCodes.Created, "")
+                  }
+                case Left(issue) =>
+                  logger.debug(issue.error)
+                  complete(StatusCodes.BadRequest, issue.error)
+              }
             }
           }
         }
       }
     }
   
-  private[this] def getCollection(): CollectionJson = {
+  private[this] def getCollection(baseHref: URI): CollectionJson = {
     val items = getAll
     
     Builder.newCollectionJson(baseHref, items, idField)
   }
   
-  private[this] def getItem(id: I): Option[CollectionJson] = {
+  private[this] def getItem(baseHref: URI, id: I): Option[CollectionJson] = {
     val item = getById(id)
     
     item.map { it => Builder.newCollectionJson(baseHref, it, idField) }
@@ -111,8 +112,8 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](baseHref:
     
   }
 
-  private[this] def cleanPath(uri: URI) = {
-    val p = uri.getPath()
-    if (p.startsWith("/")) p.drop(1) else p
-  }
+//  private[this] def cleanPath(uri: URI) = {
+//    val p = uri.getPath()
+//    if (p.startsWith("/")) p.drop(1) else p
+//  }
 }

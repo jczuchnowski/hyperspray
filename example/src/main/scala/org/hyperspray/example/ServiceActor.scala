@@ -24,9 +24,9 @@ class ServiceActor extends Actor with ActorLogging with HttpService {
 
   implicit def executionContext: ExecutionContext = context.dispatcher
     
-  val baseURL = new URI("http://0.0.0.0:8080/test-items")
+  val basePath = "test-items"
   
-  val testItemRoute = new CollectionJsonRoute[TestItem, Int](baseURL) with ExampleService
+  val testItemRoute = new CollectionJsonRoute[TestItem, Int](basePath) with ExampleService
   
   def receive = runRoute(
     testItemRoute.route

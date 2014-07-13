@@ -20,9 +20,9 @@ class GetAllEntitiesSpec extends FlatSpec with Matchers with ScalatestRouteTest 
 
   def actorRefFactory = system
   
-  val baseHref = new URI("http://0.0.0.0:8080/test-items")
+  val basePath = "test-items"
     
-  def route = (new CollectionJsonRoute[TestItem, Int](baseHref) with ExampleService).route
+  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with ExampleService).route
   
   "GET all" should "respond with application/vnd.collection+json media type" in {
     Get("/test-items") ~> route ~> check {
