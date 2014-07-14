@@ -44,7 +44,7 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
           respondWithMediaType(`application/vnd.collection+json`) {
             get {
               complete {
-                getItem(baseHref, idFromString(id))
+                getEntity(baseHref, idFromString(id))
               }
             }
           }
@@ -57,9 +57,9 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
               }
             } ~
             post {
-              entity(as[Commands.AddItemCommand]) { cmd =>
+              entity(as[Commands.AddEntityCommand]) { cmd =>
             
-                val tryNewId = addItem(cmd.template)
+                val tryNewId = addEntity(cmd.template)
             
                 tryNewId match {
                   case Right(newId) => 
@@ -83,16 +83,16 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
     Builder.newCollectionJson(baseHref, items, idField)
   }
   
-  private[this] def getItem(baseHref: URI, id: I): Option[CollectionJson] = {
-    val item = getById(id)
+  private[this] def getEntity(baseHref: URI, id: I): Option[CollectionJson] = {
+    val entity = getById(id)
     
-    item.map { it => Builder.newCollectionJson(baseHref, it, idField) }
+    entity.map { it => Builder.newCollectionJson(baseHref, it, idField) }
   }
   
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
-  private[this] def addItem(template: Template): Either[Issue, I] = {
+  private[this] def addEntity(template: Template): Either[Issue, I] = {
 
     import org.hyperspray.cj.ToEntityConversion._
     

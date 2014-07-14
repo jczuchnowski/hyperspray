@@ -30,5 +30,5 @@ object CollectionJsonProtocol extends DefaultJsonProtocol {
   implicit val collectionFormat = jsonFormat7(Collection)
   implicit val collectionJsonFormat = jsonFormat1(CollectionJson)
   
-  implicit val addItemCommand = jsonFormat1(Commands.AddItemCommand)
+  implicit val addEntityCommand = jsonFormat1(Commands.AddEntityCommand)
 }
