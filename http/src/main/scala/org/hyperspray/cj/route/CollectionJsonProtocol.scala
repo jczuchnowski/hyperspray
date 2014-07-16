@@ -15,8 +15,9 @@ object CollectionJsonProtocol extends DefaultJsonProtocol {
   implicit val anyFormat = new JsonFormat[Any] {
     def write(o:Any) = JsString(o.toString())
     def read(value:JsValue) = value match  {
-      case s: JsString => s.convertTo[String]
-      case v: JsNumber => v.convertTo[Int]  
+      case v: JsString => v.convertTo[String]
+      case v: JsNumber => v.convertTo[Int]
+      case v: JsBoolean => v.convertTo[Boolean]
     }
   }
   

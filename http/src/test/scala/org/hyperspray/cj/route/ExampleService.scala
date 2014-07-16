@@ -1,10 +1,10 @@
 package org.hyperspray.cj.route
 
-case class TestItem(id: Int, name: String, age: Int)
+case class TestItem(id: Int, name: String, age: Int, active: Boolean)
   
 trait ExampleService extends CollectionJsonService[TestItem, Int] {
     
-    var items = Seq(TestItem(123, "qwe", 10))
+    var items = Seq(TestItem(123, "qwe", 10, true))
     
     override def idFromString(id: String) = id.toInt 
     

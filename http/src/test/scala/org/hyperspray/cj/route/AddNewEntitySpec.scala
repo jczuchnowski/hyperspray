@@ -29,7 +29,8 @@ class AddNewEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest wi
 {"template" : {
     "data" : [
         {"name" : "name", "value" : "Jakub"},
-        {"name" : "age", "value" : 33}
+        {"name" : "age", "value" : 33},
+        {"name" : "active", "value" : true}
     ]
 }}
 """)
