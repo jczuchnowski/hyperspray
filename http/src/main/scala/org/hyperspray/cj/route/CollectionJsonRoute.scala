@@ -114,8 +114,4 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
     
   }
 
-//  private[this] def cleanPath(uri: URI) = {
-//    val p = uri.getPath()
-//    if (p.startsWith("/")) p.drop(1) else p
-//  }
 }

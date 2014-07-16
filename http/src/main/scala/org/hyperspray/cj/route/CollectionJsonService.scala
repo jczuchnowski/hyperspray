@@ -2,6 +2,9 @@ package org.hyperspray.cj.route
 
 import scala.concurrent.Future
 
+/**
+ * Set of method needed to fully implement the collection+json hypermedia type.
+ */
 trait CollectionJsonService[Entity, Id] {
 
   /**
