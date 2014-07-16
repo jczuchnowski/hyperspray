@@ -11,16 +11,21 @@ object CollectionJsonProtocol extends DefaultJsonProtocol {
     def read(value:JsValue) = new URI(value.toString())
   }
   
-  //TODO handle more cases
+  //TODO handle JsArray and JsObject
   implicit val anyFormat = new JsonFormat[Any] {
-    def write(o:Any) = JsString(o.toString())
+    def write(obj:Any) = obj match {
+      case o: Int => JsNumber(o.asInstanceOf[Int])
+      case o: Boolean => JsBoolean(o.asInstanceOf[Boolean])
+      case null => JsNull
+      case o => JsString(o.toString())
+    }
     def read(value:JsValue) = value match  {
       case v: JsString => v.convertTo[String]
       case v: JsNumber => v.convertTo[Int]
       case v: JsBoolean => v.convertTo[Boolean]
+      case JsNull => null
     }
-  }
-  
+  }  
   implicit val queryDataFormat = jsonFormat2(QueryData)
   implicit val queryFormat = jsonFormat5(Query) 
   implicit val linkFormat = jsonFormat5(Link)
