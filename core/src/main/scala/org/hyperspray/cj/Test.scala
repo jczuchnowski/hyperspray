@@ -15,7 +15,7 @@ object CollectionJsonConverter extends App {
       
   //val person: Seq[(String, Any)] = Person("Jakub", 33)
   
-  val person2: Item = Person("Jakub", 33).asItem(new URI("http://localhost/item/1"))
+  val person2: Item = Person("Jakub", 33).asItem(new URI("http://localhost/item/1"), "id")
   //val collPerson: CollectionJson = Person("Maciek", 28)
   
   //println(person)

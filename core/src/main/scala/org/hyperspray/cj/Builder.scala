@@ -10,7 +10,7 @@ object Builder {
 
   def newCollectionJson[T: Convertable](href: URI, items: Seq[T], idField: String): CollectionJson = {
     
-    val convItems = itemsWithData(href, items)
+    val convItems = itemsWithData(href, items, idField)
     
     val template = {
       val templateData = items.headOption map { item =>
@@ -28,16 +28,16 @@ object Builder {
   def newCollectionJson[T : Convertable](href: URI, item: T, idField: String): CollectionJson =
     newCollectionJson(href, Seq(item), idField)
   
-  private[this] def itemsWithData[T : Convertable](href: URI, items: Seq[T]) = items.map(_.asItem(href))
+  private[this] def itemsWithData[T : Convertable](href: URI, items: Seq[T], idField: String) = items.map(_.asItem(href, idField))
   
-  //TODO could this be done without passing in any instance - only type ?
+  // TODO could this be done without passing in any instance - only type ?
   // then the signature would be 'def templateWithData[T]: Seq[Data]
   private[this] def templateWithData[T : Convertable](href: URI, item: T, idField: String): Seq[Data] = {
-    val it = item asItem href
+    val it = item.asItem(href, idField)
     
     //remove the id field from the template
     val tmplIt = it.copy(data = it.data.filter(_.name != idField))
-   tmplIt.data map { _.copy(value = None) }
+    tmplIt.data map { _.copy(value = None) }
   }
     
 }

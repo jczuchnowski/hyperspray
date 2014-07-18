@@ -19,7 +19,7 @@ object FromEntityConversion {
    */
   implicit class ItemBuilder[T: Convertable](t: T) {
     
-    def asItem(uri: URI): Item = {
+    def asItem(uri: URI, idField: String): Item = {
       val params: Seq[(String, Any)] = implicitly[Convertable[T]].toParamSeq(t)
       
       val data = params.map( p => Data(name = p._1, value = Some(p._2)))
