@@ -21,7 +21,12 @@ trait CollectionJsonService[Entity, Id] {
    * Returns next unique Id.
    */
   def newId(): Id
-  
+
+  /**
+   * Deletes Entity based in provided Id.
+   */
+  def deleteById(id: Id): Unit
+
   /**
    * Returns all entities.
    */

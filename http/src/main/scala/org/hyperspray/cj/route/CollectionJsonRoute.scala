@@ -46,6 +46,10 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
               complete {
                 getEntity(baseHref, idFromString(id))
               }
+            } ~
+            delete { ctx =>
+              deleteEntity(idFromString(id))
+              ctx.complete(StatusCodes.NoContent, "")
             }
           }
         } ~
@@ -76,6 +80,8 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
         }
       }
     }
+  
+  private[this] def deleteEntity(id: I): Unit = deleteById(id)
   
   private[this] def getCollection(baseHref: URI): CollectionJson = {
     val items = getAll
