@@ -25,14 +25,13 @@ class ItemBuilderSpec extends FlatSpec with Matchers {
     item.data.map(_.value) should contain theSameElementsInOrderAs Seq(Some("123"), Some("qwe"), Some(0))    
   }
   
-  it should "correctly map default entity href with trailing slash" in {
+  it should "correctly map entity href with trailing slash" in {
     item.href shouldBe new URI(baseURI + "123")
   }
   
-  it should "correctly map default entity href without trailing slash" in {
+  it should "correctly map entity href without trailing slash" in {
     val itemNoSlash = TestItem("123", "qwe", 0).asItem(new URI(baseURInoSlash), idField)
 
     itemNoSlash.href shouldBe new URI(baseURInoSlash + "/123")
   }
-  
 }

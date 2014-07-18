@@ -24,9 +24,7 @@ object FromEntityConversion {
       
       val data = params.map( p => Data(name = p._1, value = Some(p._2)))
       
-      // take the first parameter as an ID
-      //TODO
-      val idVal = params.headOption.map( p => p._2.toString()).getOrElse("")
+      val idVal = params.find(_._1 == idField).map(_._2.toString()).getOrElse("")
       
       // make sure the URI ends with a slash
       val itemUri = if (uri.toString().endsWith("/")) {
