@@ -1,5 +1,7 @@
 package org.hyperspray.cj.route
 
+import scala.concurrent.Future
+
 case class TestItem(id: Int, name: String, age: Int, active: Boolean)
   
 trait ExampleService extends CollectionJsonService[TestItem, Int] {
@@ -10,14 +12,17 @@ trait ExampleService extends CollectionJsonService[TestItem, Int] {
     
     override def newId() = items.map(_.id).max + 1
     
-    override def deleteById(id: Int): Unit =
+    override def deleteById(id: Int): Future[Unit] = Future {
       items = items.filterNot(_.id == id)
+    }
        
-    override def getAll: Seq[TestItem] = items
+    override def getAll: Future[Seq[TestItem]] = Future(items)
     
-    override def getById(id: Int): Option[TestItem] = items.filter(_.id == id.toInt).headOption
+    override def getById(id: Int): Future[Option[TestItem]] = Future {
+      items.filter(_.id == id.toInt).headOption
+    }
     
-    override def add(item: TestItem): Int = {
+    override def add(item: TestItem): Future[Int] = Future {
       val nId = newId()
       items = items :+ item.copy(id = nId)
       nId

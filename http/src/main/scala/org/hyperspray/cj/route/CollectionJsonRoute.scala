@@ -32,7 +32,7 @@ object CollectionJsonRoute {
       fileExtensions = Seq.empty))
 }
 
-abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String)(implicit executionContext: ExecutionContext) extends Directives with LazyLogging { 
+abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String)(implicit val executionContext: ExecutionContext) extends Directives with LazyLogging { 
   
   self: CollectionJsonService[Ent, I] =>
   
@@ -65,18 +65,17 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
             post {
               entity(as[Commands.AddEntityCommand]) { cmd =>
                 complete {
-                val tryNewIdFut = addEntity(cmd.template)
+                  val tryNewId = addEntity(cmd.template)
             
-                tryNewIdFut map { tryNewId => tryNewId.fold(
-                  left => {
-                    logger.debug(left.error)
-                    HttpResponse(StatusCodes.BadRequest, left.error)
-                  },
-                  right => {
-                      HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$right") :: Nil)
-                  }
-                )
-                }
+                  tryNewId.fold(
+                    left => {
+                      logger.debug(left.error)
+                      HttpResponse(StatusCodes.BadRequest, left.error)
+                    },
+                    right => right map { id =>
+                      HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$id") :: Nil)
+                    }
+                  )
                 }
               }
             }
@@ -85,24 +84,28 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
       }
     }
   
-  private[this] def deleteEntity(id: I): Future[Unit] = Future { deleteById(id) }
+  private[this] def deleteEntity(id: I): Future[Unit] = deleteById(id)
   
-  private[this] def getCollection(baseHref: URI): Future[CollectionJson] = Future {
-    val items = getAll
+  private[this] def getCollection(baseHref: URI): Future[CollectionJson] = {
+    val itemsFut = getAll
     
-    Builder.newCollectionJson(baseHref, items, idField)
+    itemsFut map { items => 
+      Builder.newCollectionJson(baseHref, items, idField)
+    }
   }
   
-  private[this] def getEntity(baseHref: URI, id: I): Future[Option[CollectionJson]] = Future {
-    val entity = getById(id)
+  private[this] def getEntity(baseHref: URI, id: I): Future[Option[CollectionJson]] = {
+    val entityFut = getById(id)
     
-    entity.map { it => Builder.newCollectionJson(baseHref, it, idField) }
+    entityFut map { entity =>
+      entity.map { it => Builder.newCollectionJson(baseHref, it, idField) }
+    }
   }
   
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
-  private[this] def addEntity(template: Template): Future[Either[Issue, I]] = Future {
+  private[this] def addEntity(template: Template): Either[Issue, Future[I]] = {
 
     import org.hyperspray.cj.ToEntityConversion._
     
@@ -114,13 +117,16 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
     
     val newTemplate = template.copy(data = newData)
     
-    val maybeEnt = newTemplate.asEntity[Ent]
+    val maybeEnt =
+      newTemplate.asEntity[Ent]
     
-    maybeEnt fold (
-      (error) => Left(error),
-      (entity) =>
-        Right(add(entity))
-    )
+      maybeEnt fold (
+        (error) => Left(error),
+        (entity) => {
+          val e = Right(add(entity))
+          e
+        }
+      )
     
   }
 
