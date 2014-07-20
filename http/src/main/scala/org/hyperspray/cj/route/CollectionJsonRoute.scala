@@ -12,6 +12,8 @@ import org.hyperspray.macros.Recoverable._
 import org.hyperspray.cj.model._
 import org.hyperspray.cj.route.CollectionJsonProtocol._
 
+import scala.concurrent.{ExecutionContext, Future}
+
 import spray.http._
 import spray.http.HttpHeaders._
 import spray.http.MediaTypes._
@@ -30,7 +32,7 @@ object CollectionJsonRoute {
       fileExtensions = Seq.empty))
 }
 
-abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String) extends Directives with LazyLogging { 
+abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String)(implicit executionContext: ExecutionContext) extends Directives with LazyLogging { 
   
   self: CollectionJsonService[Ent, I] =>
   
@@ -62,17 +64,19 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
             } ~
             post {
               entity(as[Commands.AddEntityCommand]) { cmd =>
+                complete {
+                val tryNewIdFut = addEntity(cmd.template)
             
-                val tryNewId = addEntity(cmd.template)
-            
-                tryNewId match {
-                  case Right(newId) => 
-                    respondWithHeader(`Location`(s"$baseHref/$newId")) {
-                      complete(StatusCodes.Created, "")
-                    }
-                  case Left(issue) =>
-                    logger.debug(issue.error)
-                    complete(StatusCodes.BadRequest, issue.error)
+                tryNewIdFut map { tryNewId => tryNewId.fold(
+                  left => {
+                    logger.debug(left.error)
+                    HttpResponse(StatusCodes.BadRequest, left.error)
+                  },
+                  right => {
+                      HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$right") :: Nil)
+                  }
+                )
+                }
                 }
               }
             }
@@ -81,15 +85,15 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
       }
     }
   
-  private[this] def deleteEntity(id: I): Unit = deleteById(id)
+  private[this] def deleteEntity(id: I): Future[Unit] = Future { deleteById(id) }
   
-  private[this] def getCollection(baseHref: URI): CollectionJson = {
+  private[this] def getCollection(baseHref: URI): Future[CollectionJson] = Future {
     val items = getAll
     
     Builder.newCollectionJson(baseHref, items, idField)
   }
   
-  private[this] def getEntity(baseHref: URI, id: I): Option[CollectionJson] = {
+  private[this] def getEntity(baseHref: URI, id: I): Future[Option[CollectionJson]] = Future {
     val entity = getById(id)
     
     entity.map { it => Builder.newCollectionJson(baseHref, it, idField) }
@@ -98,7 +102,7 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
-  private[this] def addEntity(template: Template): Either[Issue, I] = {
+  private[this] def addEntity(template: Template): Future[Either[Issue, I]] = Future {
 
     import org.hyperspray.cj.ToEntityConversion._
     
