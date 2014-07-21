@@ -12,7 +12,7 @@ object CollectionJsonProtocol extends DefaultJsonProtocol {
   }
   
   //TODO handle JsArray and JsObject
-  implicit val anyFormat = new JsonFormat[Any] {
+  implicit object AnyFormat extends JsonFormat[Any] {
     def write(obj:Any) = obj match {
       case o: Int => JsNumber(o.asInstanceOf[Int])
       case o: Boolean => JsBoolean(o.asInstanceOf[Boolean])
