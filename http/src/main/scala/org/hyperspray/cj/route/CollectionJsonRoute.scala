@@ -42,6 +42,17 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
     schemeName { sName =>
       hostName { hName =>
         lazy val baseHref = new URI(s"$sName://$hName/$basePath")
+        path(basePath / "search") {
+          respondWithMediaType(`application/vnd.collection+json`) {
+            get {
+              parameterMap { params =>
+                complete {
+                  search(baseHref, params)
+                }
+              }
+            }
+          }
+        } ~
         path(basePath / Segment) { id =>
           respondWithMediaType(`application/vnd.collection+json`) {
             get {
@@ -128,6 +139,14 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
         }
       )
     
+  }
+  
+  private[this] def search(baseHref: URI, criteria: Map[String, String]): Future[CollectionJson] = {
+    val entitiesFut = find(criteria)
+    
+    entitiesFut map { ent => 
+      Builder.newCollectionJson(baseHref, ent, idField)
+    }
   }
 
 }

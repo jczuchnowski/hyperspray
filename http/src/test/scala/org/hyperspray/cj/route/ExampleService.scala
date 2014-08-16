@@ -27,4 +27,16 @@ trait ExampleService extends CollectionJsonService[TestItem, Int] {
       items = items :+ item.copy(id = nId)
       nId
     }
+    
+    override def find(criteria: Map[String, String]) = Future {
+      val nameOpt = criteria.get("name")
+      val ageOpt = criteria.get("age")
+      val activeOpt = criteria.get("active")
+      
+      items.filter { item =>
+        nameOpt.map( n => item.name == n).getOrElse(true) &&
+        ageOpt.map( a => item.age == a.toInt).getOrElse(true) &&
+        activeOpt.map( act => item.active == act.toBoolean).getOrElse(false)
+      }
+    }
   }

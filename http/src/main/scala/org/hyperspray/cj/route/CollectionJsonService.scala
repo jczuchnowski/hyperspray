@@ -42,4 +42,6 @@ trait CollectionJsonService[Entity, Id] {
    * Adds a new Entity to the underlying collection and returns its new Id.
    */
   def add(entity: Entity): Future[Id]
+  
+  def find(criteria: Map[String, String]): Future[Seq[Entity]]
 }

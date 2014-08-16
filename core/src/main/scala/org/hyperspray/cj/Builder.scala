@@ -20,8 +20,20 @@ object Builder {
       templateData map { Template }
     }
     
+    val queries = {
+      val queryData = items.headOption map { item =>
+        queryWithData(item, idField)
+      }
+      
+      val query = queryData map { q =>
+        Seq(Query(href.resolve("search"), Properties.Search.rel, None, None, q)) 
+      }
+      
+      query.getOrElse(Seq.empty)
+    }
+
     CollectionJson(
-      Collection(href = href, items = convItems, template = template)
+      Collection(href = href, items = convItems, template = template, queries = queries)
     )
   }
   
@@ -38,6 +50,14 @@ object Builder {
     //remove the id field from the template
     val tmplIt = it.copy(data = it.data.filter(_.name != idField))
     tmplIt.data map { _.copy(value = None) }
+  }
+  
+  private[this] def queryWithData[T : Convertable](item: T, idField: String): Seq[QueryData] = {
+    val it = item.asItem(new URI("any"), idField)
+    
+    //remove the id field from the template
+    val queryIt = it.copy(data = it.data.filter(_.name != idField))
+    queryIt.data map { data => QueryData(data.name, "") }
   }
     
 }

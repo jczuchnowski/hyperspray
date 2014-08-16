@@ -57,5 +57,27 @@ class BuilderSpec extends FlatSpec with Matchers {
     
     template should be (expected)    
   }
+  
+  it should "create CollectionJson with Query" in {
+    val coll = Builder.newCollectionJson(href, testItems, "id")
+
+    val queries = coll.collection.queries
+    
+    val expected =
+      Seq(
+        Query(
+          href.resolve("search"), 
+          "search", 
+          None, 
+          None, 
+          Seq(
+            QueryData("name", ""), 
+            QueryData("age", "")
+          )
+        )
+      )
+    
+    queries should be (expected)    
+  }
 
 }
