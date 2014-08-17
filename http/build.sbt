@@ -1,6 +1,4 @@
-version := "0.1"
-
-scalaVersion := "2.11.1"
+EclipseKeys.withSource := true
 
 resolvers ++= Seq(
   "snapshots"           at "http://oss.sonatype.org/content/repositories/snapshots",
@@ -8,8 +6,6 @@ resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   "spray repo"          at "http://repo.spray.io"
 )
-
-EclipseKeys.withSource := true
 
 scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation", "-encoding", "utf8")
 
