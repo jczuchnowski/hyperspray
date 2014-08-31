@@ -60,9 +60,21 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
                 getEntity(baseHref, idFromString(id))
               }
             } ~
-            delete { ctx =>
-              deleteEntity(idFromString(id))
-              ctx.complete(StatusCodes.NoContent, "")
+            delete {
+              complete {
+                val resultFut = deleteEntity(idFromString(id))
+            
+                resultFut.map { maybeNewId =>
+                  maybeNewId.fold(
+                    error => {
+                      logger.debug(error)
+                      HttpResponse(StatusCodes.BadRequest, error)
+                    },
+                    _ =>
+                      HttpResponse(status = StatusCodes.NoContent)
+                  )
+                }
+              }
             }
           }
         } ~
@@ -76,17 +88,18 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
             post {
               entity(as[Commands.AddEntityCommand]) { cmd =>
                 complete {
-                  val tryNewId = addEntity(cmd.template)
+                  val newIdFut = addEntity(cmd.template)
             
-                  tryNewId.fold(
-                    left => {
-                      logger.debug(left.error)
-                      HttpResponse(StatusCodes.BadRequest, left.error)
-                    },
-                    right => right map { id =>
-                      HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$id") :: Nil)
-                    }
-                  )
+                  newIdFut.map { maybeNewId =>
+                    maybeNewId.fold(
+                      error => {
+                        logger.debug(error)
+                        HttpResponse(StatusCodes.BadRequest, error)
+                      },
+                      id =>
+                        HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$id") :: Nil)
+                    )                    
+                  }
                 }
               }
             }
@@ -95,7 +108,7 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
       }
     }
   
-  private[this] def deleteEntity(id: I): Future[Unit] = deleteById(id)
+  private[this] def deleteEntity(id: I): Future[Either[String, Unit]] = deleteById(id)
   
   private[this] def getCollection(baseHref: URI): Future[CollectionJson] = {
     val itemsFut = getAll
@@ -116,7 +129,7 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
-  private[this] def addEntity(template: Template): Either[Issue, Future[I]] = {
+  private[this] def addEntity(template: Template): Future[Either[String, I]] = {
 
     import org.hyperspray.cj.ToEntityConversion._
     
@@ -131,13 +144,12 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
     val maybeEnt =
       newTemplate.asEntity[Ent]
     
-      maybeEnt fold (
-        (error) => Left(error),
-        (entity) => {
-          val e = Right(add(entity))
-          e
-        }
-      )
+    maybeEnt fold (
+      (error) => Future(Left(error.error)),
+      (entity) => {
+        add(entity)
+      }
+    )
     
   }
   

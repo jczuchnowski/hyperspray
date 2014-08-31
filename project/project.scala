@@ -23,4 +23,6 @@ object HypersprayBuild extends Build {
   lazy val http = Project("hyperspray-http", file("http"), settings = buildSettings) dependsOn(core)
 
   lazy val example = Project("hyperspray-example", file("example"), settings = buildSettings) dependsOn(http)
+
+  lazy val reactivemongo = Project("hyperspray-reactivemongo", file("reactivemongo"), settings = buildSettings) dependsOn(http)
 }

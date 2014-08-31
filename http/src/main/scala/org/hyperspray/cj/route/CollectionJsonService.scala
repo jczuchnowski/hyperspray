@@ -2,12 +2,14 @@ package org.hyperspray.cj.route
 
 import scala.concurrent.{ExecutionContext, Future}
 
+
 /**
  * Set of method needed to fully implement the collection+json hypermedia type.
  */
 trait CollectionJsonService[Entity, Id] {
 
   implicit def executionContext: ExecutionContext
+  
   /**
    * Returns the name of the Entity's id field.
    */
@@ -26,7 +28,7 @@ trait CollectionJsonService[Entity, Id] {
   /**
    * Deletes Entity based in provided Id.
    */
-  def deleteById(id: Id): Future[Unit]
+  def deleteById(id: Id): Future[Either[String, Unit]]
 
   /**
    * Returns all entities.
@@ -41,7 +43,7 @@ trait CollectionJsonService[Entity, Id] {
   /**
    * Adds a new Entity to the underlying collection and returns its new Id.
    */
-  def add(entity: Entity): Future[Id]
+  def add(entity: Entity): Future[Either[String, Id]]
   
   def find(criteria: Map[String, String]): Future[Seq[Entity]]
 }

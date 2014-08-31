@@ -12,8 +12,9 @@ trait ExampleService extends CollectionJsonService[TestItem, Int] {
     
     override def newId() = items.map(_.id).max + 1
     
-    override def deleteById(id: Int): Future[Unit] = Future {
+    override def deleteById(id: Int): Future[Either[String, Unit]] = Future {
       items = items.filterNot(_.id == id)
+      Right(())
     }
        
     override def getAll: Future[Seq[TestItem]] = Future(items)
@@ -22,10 +23,10 @@ trait ExampleService extends CollectionJsonService[TestItem, Int] {
       items.filter(_.id == id.toInt).headOption
     }
     
-    override def add(item: TestItem): Future[Int] = Future {
+    override def add(item: TestItem): Future[Either[String, Int]] = Future {
       val nId = newId()
       items = items :+ item.copy(id = nId)
-      nId
+      Right(nId)
     }
     
     override def find(criteria: Map[String, String]) = Future {
