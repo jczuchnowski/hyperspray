@@ -16,6 +16,7 @@ trait MongoRepository[Entity, Id] extends CollectionJsonService[Entity, Id] {
 
   def collection: BSONCollection
 
+  //TODO provide macro based default implementation looking for @Id or _id field
   def getId(entity: Entity): Id
   
   def add(e: Entity): Future[Either[String, Id]] = {
@@ -52,5 +53,8 @@ trait MongoRepository[Entity, Id] extends CollectionJsonService[Entity, Id] {
     
   def getAll: Future[Seq[Entity]] =
     collection.find(BSONDocument.empty).cursor[Entity].collect[List]()
+    
+  //TODO default implementation
+  def find(criteria: Map[String, String]): Future[Seq[Entity]]
 
 }
