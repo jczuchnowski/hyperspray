@@ -12,11 +12,11 @@ javaOptions := Seq("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,
 
 libraryDependencies ++= {
   Seq(
-    "org.slf4j"               %   "slf4j-api"       % "1.7.6",
-    "ch.qos.logback"          %   "logback-core"    % "1.1.1",
-    "ch.qos.logback"          %   "logback-classic" % "1.1.1",
-    "joda-time"               %   "joda-time"       % "2.3",
-    "org.joda"                %   "joda-convert"    % "1.4",
-    "org.scalatest"           %%  "scalatest"       % "2.2.0" % "test"
+    "org.slf4j"               %   "slf4j-api"       % "1.7.7",
+    "ch.qos.logback"          %   "logback-core"    % "1.1.2",
+    "ch.qos.logback"          %   "logback-classic" % "1.1.2",
+    "joda-time"               %   "joda-time"       % "2.5",
+    "org.joda"                %   "joda-convert"    % "1.7",
+    "org.scalatest"           %%  "scalatest"       % "2.2.1" % "test"
   )
 }

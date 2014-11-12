@@ -6,6 +6,6 @@ resolvers ++= Seq(
 
 libraryDependencies ++= {
   Seq(
-    "org.reactivemongo"       %% "reactivemongo"    % "0.10.5.akka23-SNAPSHOT"
+    "org.reactivemongo"       %% "reactivemongo"    % "0.10.5.0.akka23"
   )
 }

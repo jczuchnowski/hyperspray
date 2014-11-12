@@ -3,7 +3,7 @@ import Keys._
 
 object BuildSettings {
   val buildVersion      = "0.1"
-  val buildScalaVersion = "2.11.2"
+  val buildScalaVersion = "2.11.4"
 
   val buildSettings = Seq (
     version      := buildVersion,
