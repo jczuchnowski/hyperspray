@@ -14,7 +14,7 @@ scalacOptions ++= Seq("-feature", "-unchecked", "-deprecation", "-encoding", "ut
 javaOptions := Seq("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000")
 
 libraryDependencies ++= {
-  val akkaVersion = "2.3.6"
+  val akkaVersion = "2.3.8"
   val sprayVersion = "1.3.2"
   Seq(
     "io.spray"                %%  "spray-can"       % sprayVersion,
@@ -23,10 +23,10 @@ libraryDependencies ++= {
     "io.spray"                %%  "spray-json"      % "1.3.1",  
     "com.typesafe.akka"       %%  "akka-actor"      % akkaVersion,
     "com.typesafe.akka"       %%  "akka-testkit"    % akkaVersion % "test",
-    "org.slf4j"               %   "slf4j-api"       % "1.7.7",
+    "org.slf4j"               %   "slf4j-api"       % "1.7.10",
     "ch.qos.logback"          %   "logback-core"    % "1.1.2",
     "ch.qos.logback"          %   "logback-classic" % "1.1.2",
-    "joda-time"               %   "joda-time"       % "2.5",
+    "joda-time"               %   "joda-time"       % "2.7",
     "org.joda"                %   "joda-convert"    % "1.7",
     "org.scalatest"           %%  "scalatest"       % "2.2.1" % "test"
   )
