@@ -11,10 +11,8 @@ import spray.http.MediaTypes._
 import spray.http.StatusCodes._
 import spray.util.LoggingContext
 import org.hyperspray.cj.FromEntityConversion._
-import org.hyperspray.macros.Convertable
-import org.hyperspray.macros.Recoverable
-import org.hyperspray.cj.route.CollectionJsonRoute
-import org.hyperspray.cj.route.CollectionJsonService
+import org.hyperspray.macros.{Convertable, Recoverable}
+import org.hyperspray.cj.route.{CollectionJsonRoute, CollectionJsonService, CollectionJsonReadOps, CollectionJsonWriteOps}
 
 class ServiceActor extends Actor with ActorLogging with HttpService {
 
@@ -26,7 +24,13 @@ class ServiceActor extends Actor with ActorLogging with HttpService {
     
   val basePath = "test-items"
   
-  val testItemRoute = new CollectionJsonRoute[TestItem, Int](basePath) with ExampleService
+  val testItemRoute = new CollectionJsonRoute[TestItem, Int](basePath) 
+      with CollectionJsonReadOps[TestItem, Int] 
+      with CollectionJsonWriteOps[TestItem, Int] 
+      with InMemoryExampleService {
+    override def convertable = implicitly
+    override def recoverable = implicitly
+  }
   
   def receive = runRoute(
     testItemRoute.route

@@ -4,7 +4,7 @@ import scala.concurrent.Future
 
 case class TestItem(id: Int, name: String, age: Int, active: Boolean)
   
-trait ExampleService extends CollectionJsonService[TestItem, Int] {
+trait ExampleService extends CollectionJsonService[TestItem, Int] with CollectionJsonEntityIdProvider[Int] {
     
     var items = Seq(TestItem(123, "qwe", 10, true))
     

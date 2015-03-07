@@ -22,7 +22,10 @@ class AddNewEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest wi
   
   val basePath = "test-items"
     
-  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with ExampleService).route
+  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with CollectionJsonReadOps[TestItem, Int] with CollectionJsonWriteOps[TestItem, Int] with ExampleService {
+    override def convertable = implicitly
+    override def recoverable = implicitly
+  }).route
 
   val tmpl = HttpEntity(`application/json`, 
 """

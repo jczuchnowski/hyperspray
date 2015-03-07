@@ -34,7 +34,7 @@ object CollectionJsonRoute {
 
 abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String)(implicit val executionContext: ExecutionContext) extends Directives with LazyLogging { 
   
-  self: CollectionJsonService[Ent, I] =>
+  self: CollectionJsonService[Ent, I] with CollectionJsonEntityIdProvider[I] =>
   
   import CollectionJsonRoute._
     
@@ -44,88 +44,128 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
         lazy val baseHref = new URI(s"$sName://$hName/$basePath")
         path(basePath / "search") {
           respondWithMediaType(`application/vnd.collection+json`) {
-            get {
-              parameterMap { params =>
-                complete {
-                  search(baseHref, params)
-                }
-              }
-            }
+            searchRoute(baseHref)
           }
         } ~
         path(basePath / Segment) { id =>
           respondWithMediaType(`application/vnd.collection+json`) {
-            get {
-              complete {
-                getEntity(baseHref, idFromString(id))
-              }
-            } ~
-            delete {
-              complete {
-                val resultFut = deleteEntity(idFromString(id))
-            
-                resultFut.map { maybeNewId =>
-                  maybeNewId.fold(
-                    error => {
-                      logger.debug(error)
-                      HttpResponse(StatusCodes.BadRequest, error)
-                    },
-                    _ =>
-                      HttpResponse(status = StatusCodes.NoContent)
-                  )
-                }
-              }
-            }
+            getEntityRoute(baseHref, id) ~ deleteRoute(baseHref, id)
           }
         } ~
         path(basePath) {
           respondWithMediaType(`application/vnd.collection+json`) {
-            get {
-              complete {
-                getCollection(baseHref)
-              }
-            } ~
-            post {
-              entity(as[Commands.AddEntityCommand]) { cmd =>
-                complete {
-                  val newIdFut = addEntity(cmd.template)
-            
-                  newIdFut.map { maybeNewId =>
-                    maybeNewId.fold(
-                      error => {
-                        logger.debug(error)
-                        HttpResponse(StatusCodes.BadRequest, error)
-                      },
-                      id =>
-                        HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$id") :: Nil)
-                    )                    
-                  }
-                }
-              }
-            }
+            getCollectionRoute(baseHref) ~ addEntityRoute(baseHref)
           }
         }
       }
     }
-  
-  private[this] def deleteEntity(id: I): Future[Either[String, Unit]] = deleteById(id)
-  
-  private[this] def getCollection(baseHref: URI): Future[CollectionJson] = {
-    val itemsFut = getAll
+
+  def addEntityRoute(baseHref: URI): Route
+
+  def deleteRoute(baseHref: URI, id: String): Route
     
-    itemsFut map { items => 
-      Builder.newCollectionJson(baseHref, items, idField)
+  def searchRoute(baseHref: URI): Route
+
+  def getCollectionRoute(baseHref: URI): Route
+  
+  def getEntityRoute(baseHref: URI, id: String): Route
+
+}
+
+trait CollectionJsonReadOps[Ent, I] {
+
+  self: CollectionJsonRoute[Ent, I] with CollectionJsonService[Ent, I] with CollectionJsonEntityIdProvider[I] =>
+
+  implicit def convertable: Convertable[Ent]
+  
+  implicit def recoverable: Recoverable[Ent]
+
+  override def searchRoute(baseHref: URI): Route =
+    get {
+      parameterMap { params =>
+        complete {
+          search(baseHref, params)
+        }
+      }
     }
-  }
-  
-  private[this] def getEntity(baseHref: URI, id: I): Future[Option[CollectionJson]] = {
-    val entityFut = getById(id)
-    
-    entityFut map { entity =>
+
+  override def getCollectionRoute(baseHref: URI): Route =
+    get {
+      complete {
+        getCollection(baseHref)
+      }
+    }
+
+  override def getEntityRoute(baseHref: URI, id: String): Route =
+    get {
+      complete {
+        getEntity(baseHref, idFromString(id))
+      }
+    }
+
+  private[this] def getEntity(baseHref: URI, id: I): Future[Option[CollectionJson]] = 
+    getById(id) map { entity =>
       entity.map { it => Builder.newCollectionJson(baseHref, it, idField) }
     }
-  }
+
+  private[this] def getCollection(baseHref: URI): Future[CollectionJson] =
+    getAll map { items => 
+      Builder.newCollectionJson(baseHref, items, idField)
+    }
+
+  private[this] def search(baseHref: URI, criteria: Map[String, String]): Future[CollectionJson] =    
+    find(criteria) map { ent => 
+      Builder.newCollectionJson(baseHref, ent, idField)
+    }
+} 
+
+trait CollectionJsonWriteOps[Ent, I] { 
+
+  //self: CollectionJsonRoute[Ent, I] => 
+  self: CollectionJsonRoute[Ent, I] with CollectionJsonService[Ent, I] with CollectionJsonEntityIdProvider[I] =>
+
+  implicit def convertable: Convertable[Ent]
   
+  implicit def recoverable: Recoverable[Ent]
+
+  override def addEntityRoute(baseHref: URI): Route = 
+    post {
+      entity(as[Commands.AddEntityCommand]) { cmd =>
+        complete {
+          val newIdFut = addEntity(cmd.template)
+    
+          newIdFut.map { maybeNewId =>
+            maybeNewId.fold(
+              error => {
+                logger.debug(error)
+                HttpResponse(StatusCodes.BadRequest, error)
+              },
+              id =>
+                HttpResponse(status = StatusCodes.Created, headers = `Location`(s"$baseHref/$id") :: Nil)
+            )                    
+          }
+        }
+      }
+    }
+
+  override def deleteRoute(baseHref: URI, id: String): Route = 
+    delete {
+      complete {
+        deleteEntity(idFromString(id)) map { maybeNewId =>
+          maybeNewId.fold(
+            error => {
+              logger.debug(error)
+              HttpResponse(StatusCodes.BadRequest, error)
+            },
+            _ =>
+              HttpResponse(status = StatusCodes.NoContent)
+          )
+        }
+      }
+    }
+
+  private[this] def deleteEntity(id: I): Future[Either[String, Unit]] = deleteById(id)
+
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
    */
@@ -146,19 +186,8 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
     
     maybeEnt fold (
       (error) => Future(Left(error.error)),
-      (entity) => {
-        add(entity)
-      }
+      (entity) => add(entity)
     )
     
   }
-  
-  private[this] def search(baseHref: URI, criteria: Map[String, String]): Future[CollectionJson] = {
-    val entitiesFut = find(criteria)
-    
-    entitiesFut map { ent => 
-      Builder.newCollectionJson(baseHref, ent, idField)
-    }
-  }
-
 }

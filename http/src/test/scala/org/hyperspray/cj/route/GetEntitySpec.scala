@@ -22,7 +22,10 @@ class GetEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest with 
   
   val basePath = "test-items"
     
-  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with ExampleService).route
+  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with CollectionJsonReadOps[TestItem, Int] with CollectionJsonWriteOps[TestItem, Int] with ExampleService {
+    override def convertable = implicitly
+    override def recoverable = implicitly
+  }).route
   
   "GET by id" should "respond with application/vnd.collection+json media type" in {
     Get("/test-items/123") ~> route ~> check {

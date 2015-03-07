@@ -8,7 +8,7 @@ import reactivemongo.bson._
 import scala.concurrent.{ExecutionContext, Future}
 
 
-trait MongoRepository[Entity, Id] extends CollectionJsonService[Entity, Id] {
+trait MongoRepository[Entity] extends CollectionJsonService[Entity, BSONObjectID] {
 
   implicit def format: BSONDocumentReader[Entity] with BSONDocumentWriter[Entity]
 
@@ -17,9 +17,9 @@ trait MongoRepository[Entity, Id] extends CollectionJsonService[Entity, Id] {
   def collection: BSONCollection
 
   //TODO provide macro based default implementation looking for @Id or _id field
-  def getId(entity: Entity): Id
+  def getId(entity: Entity): BSONObjectID
   
-  def add(e: Entity): Future[Either[String, Id]] = {
+  def add(e: Entity): Future[Either[String, BSONObjectID]] = {
     val result = collection.insert(e)
     
     for {

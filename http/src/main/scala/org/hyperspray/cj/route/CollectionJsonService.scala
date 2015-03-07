@@ -11,21 +11,6 @@ trait CollectionJsonService[Entity, Id] {
   implicit def executionContext: ExecutionContext
   
   /**
-   * Returns the name of the Entity's id field.
-   */
-  def idField: String = "id"
-  
-  /**
-   * A function able to convert a String into an Id.
-   */
-  def idFromString(id: String): Id
-  
-  /**
-   * Returns next unique Id.
-   */
-  def newId(): Id
-
-  /**
    * Deletes Entity based in provided Id.
    */
   def deleteById(id: Id): Future[Either[String, Unit]]
