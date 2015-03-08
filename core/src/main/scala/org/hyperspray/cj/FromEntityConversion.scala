@@ -60,5 +60,26 @@ object FromEntityConversion {
       
       CollectionJson(cj.collection.copy(queries = cj.collection.queries :+ searchQuery))
     }
+
+    def withTemplate(idField: String): CollectionJson = {
+
+      // TODO could this be done without passing in any instance - only type ?
+      // then the signature would be 'def templateWithData[T]: Seq[Data]
+      def templateWithData(href: URI, item: Item, idField: String): Seq[Data] = {
+        //remove the id field from the template
+        val tmplIt = item.copy(data = item.data.filter(_.name != idField))
+        tmplIt.data map { _.copy(value = None) }
+      }
+
+      val template = {
+        val templateData = cj.collection.items.headOption map { item =>
+          templateWithData(cj.collection.href, item, idField)
+        }
+      
+        templateData map { Template }
+      }
+
+      CollectionJson(cj.collection.copy(template = template))
+    }
   }
 }

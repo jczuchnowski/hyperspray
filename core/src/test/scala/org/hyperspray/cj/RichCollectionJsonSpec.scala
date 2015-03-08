@@ -18,16 +18,39 @@ class RichCollectionJsonSpec extends FlatSpec with Matchers {
   
   "A RichCollectionJson" should "add new profile link" in {
     
-    val cj = Builder.newCollectionJson[TestItem](new URI(baseHref), Seq.empty, "id").
+    val cj = new Builder[TestItem](new URI(baseHref), Seq.empty, "id").newCollectionJson.
       withProfileLink(new URI(profileLink))
     
     cj.collection.links shouldBe Seq(Link(href = new URI(profileLink), rel = Profile.rel))
   }
   
   it should "add search query" in {
-    val cj = Builder.newCollectionJson[TestItem](new URI(baseHref), Seq.empty, "id").
+    val cj = new Builder[TestItem](new URI(baseHref), Seq.empty, "id").newCollectionJson.
       withSearchQuery(List("name", "age"))
     
     cj.collection.queries shouldBe Seq(Query(href = new URI(baseHref + "/search"), rel = Search.rel, data = Seq(QueryData("name", ""), QueryData("age", ""))))    
+  }
+
+  it should "add a Template" in {
+
+    val testItems = Seq(
+      TestItem("id1", "name1", 11), 
+      TestItem("id2", "name2", 22), 
+      TestItem("id3", "name3", 33))
+
+    val coll = new Builder(new URI(baseHref), testItems, "id").newCollectionJson.withTemplate("id")
+
+    val template = coll.collection.template
+    
+    val expected = Some(
+      Template(
+        Seq(
+          Data(None, "name", None), 
+          Data(None, "age", None)
+        )
+      )
+    )
+    
+    template should be (expected)
   }
 }

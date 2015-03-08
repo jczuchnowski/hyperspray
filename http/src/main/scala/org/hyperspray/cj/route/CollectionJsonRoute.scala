@@ -80,6 +80,8 @@ trait CollectionJsonReadOps[Ent, I] {
   
   implicit def recoverable: Recoverable[Ent]
 
+  import org.hyperspray.cj.Builder._
+
   override def searchRoute(baseHref: URI): Route =
     get {
       parameterMap { params =>
@@ -104,18 +106,20 @@ trait CollectionJsonReadOps[Ent, I] {
     }
 
   private[this] def getEntity(baseHref: URI, id: I): Future[Option[CollectionJson]] = 
-    getById(id) map { entity =>
-      entity.map { it => Builder.newCollectionJson(baseHref, it, idField) }
+    getById(id) map { entity => 
+      entity.map { it => new Builder(baseHref, Seq(it), idField).newCollectionJson }
     }
 
   private[this] def getCollection(baseHref: URI): Future[CollectionJson] =
-    getAll map { items => 
-      Builder.newCollectionJson(baseHref, items, idField)
-    }
+    getAll map { items => {
+      val builder = new Builder(baseHref, items, idField)
+      builder.newCollectionJson
+    }}
 
   private[this] def search(baseHref: URI, criteria: Map[String, String]): Future[CollectionJson] =    
-    find(criteria) map { ent => 
-      Builder.newCollectionJson(baseHref, ent, idField)
+    find(criteria) map { items => 
+      val builder = new Builder(baseHref, items, idField)
+      builder.newCollectionJson
     }
 } 
 
