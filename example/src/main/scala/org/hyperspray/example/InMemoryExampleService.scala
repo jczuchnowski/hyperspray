@@ -1,10 +1,9 @@
 package org.hyperspray.example
 
 import org.hyperspray.cj.route.{CollectionJsonService, CollectionJsonEntityIdProvider}
+import org.hyperspray.example.model.TestItem
 import scala.concurrent.Future
 
-
-case class TestItem(id: Int, name: String, age: Int)
   
 trait InMemoryExampleService extends CollectionJsonService[TestItem, Int] with CollectionJsonEntityIdProvider[Int] {
     

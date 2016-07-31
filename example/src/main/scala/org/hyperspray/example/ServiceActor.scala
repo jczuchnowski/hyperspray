@@ -11,8 +11,9 @@ import spray.http.MediaTypes._
 import spray.http.StatusCodes._
 import spray.util.LoggingContext
 import org.hyperspray.cj.FromEntityConversion._
-import org.hyperspray.macros.{Convertable, Recoverable}
 import org.hyperspray.cj.route.{CollectionJsonRoute, CollectionJsonService, CollectionJsonReadOps, CollectionJsonWriteOps}
+import org.hyperspray.example.model.TestItem
+import org.hyperspray.macros.{Convertable, Recoverable}
 
 class ServiceActor extends Actor with ActorLogging with HttpService {
 
