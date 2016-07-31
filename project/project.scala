@@ -3,7 +3,7 @@ import Keys._
 
 object BuildSettings {
   val buildVersion      = "0.1"
-  val buildScalaVersion = "2.11.4"
+  val buildScalaVersion = "2.11.8"
 
   val buildSettings = Seq (
     version      := buildVersion,
@@ -22,7 +22,5 @@ object HypersprayBuild extends Build {
   
   lazy val http = Project("hyperspray-http", file("http"), settings = buildSettings) dependsOn(core)
 
-  lazy val example = Project("hyperspray-example", file("example"), settings = buildSettings) dependsOn(http, reactivemongo)
-
-  lazy val reactivemongo = Project("hyperspray-reactivemongo", file("reactivemongo"), settings = buildSettings) dependsOn(http)
+  lazy val example = Project("hyperspray-example", file("example"), settings = buildSettings) dependsOn(http)
 }
