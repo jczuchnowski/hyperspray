@@ -34,7 +34,7 @@ object CollectionJsonRoute {
 
 abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath: String)(implicit val executionContext: ExecutionContext) extends Directives with LazyLogging { 
   
-  self: CollectionJsonService[Ent, I] with CollectionJsonEntityIdProvider[I] =>
+  self: CollectionJsonEntityIdProvider[I] =>
   
   import CollectionJsonRoute._
     
@@ -74,7 +74,7 @@ abstract class CollectionJsonRoute[Ent : Convertable : Recoverable, I](basePath:
 
 trait CollectionJsonReadOps[Ent, I] {
 
-  self: CollectionJsonRoute[Ent, I] with CollectionJsonService[Ent, I] with CollectionJsonEntityIdProvider[I] =>
+  self: CollectionJsonRoute[Ent, I] with CollectionJsonEntityIdProvider[I] =>
 
   implicit def convertable: Convertable[Ent]
   
@@ -121,12 +121,16 @@ trait CollectionJsonReadOps[Ent, I] {
       val builder = new Builder(baseHref, items, idField)
       builder.newCollectionJson
     }
+
+  def getById(id: I): Future[Option[Ent]]
+  def getAll: Future[Seq[Ent]]
+  def find(criteria: Map[String, String]): Future[Seq[Ent]]
 } 
 
 trait CollectionJsonWriteOps[Ent, I] { 
 
   //self: CollectionJsonRoute[Ent, I] => 
-  self: CollectionJsonRoute[Ent, I] with CollectionJsonService[Ent, I] with CollectionJsonEntityIdProvider[I] =>
+  self: CollectionJsonRoute[Ent, I] with CollectionJsonEntityIdProvider[I] =>
 
   implicit def convertable: Convertable[Ent]
   
@@ -155,7 +159,7 @@ trait CollectionJsonWriteOps[Ent, I] {
   override def deleteRoute(baseHref: URI, id: String): Route = 
     delete {
       complete {
-        deleteEntity(idFromString(id)) map { maybeNewId =>
+        deleteById(idFromString(id)) map { maybeNewId =>
           maybeNewId.fold(
             error => {
               logger.debug(error)
@@ -167,8 +171,6 @@ trait CollectionJsonWriteOps[Ent, I] {
         }
       }
     }
-
-  private[this] def deleteEntity(id: I): Future[Either[String, Unit]] = deleteById(id)
 
   /**
    * Returns the Id if the new Entity or the Issue that prevented it from happening.
@@ -194,4 +196,8 @@ trait CollectionJsonWriteOps[Ent, I] {
     )
     
   }
+
+  def add(entity: Ent): Future[Either[String, I]]
+  def deleteById(id: I): Future[Either[String, Unit]]
+
 }

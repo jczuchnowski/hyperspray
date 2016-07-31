@@ -1,4 +1,4 @@
-package org.hyperspray.cj.route
+package org.hyperspray.example
 
 import scala.concurrent.{ExecutionContext, Future}
 

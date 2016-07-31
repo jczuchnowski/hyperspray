@@ -1,6 +1,6 @@
 package org.hyperspray.example
 
-import org.hyperspray.cj.route.{CollectionJsonService, CollectionJsonEntityIdProvider}
+import org.hyperspray.cj.route.CollectionJsonEntityIdProvider
 import org.hyperspray.example.model.TestItem
 import scala.concurrent.Future
 
