@@ -1,17 +1,17 @@
 package org.hyperspray.example
 
 import org.hyperspray.cj.route.CollectionJsonEntityIdProvider
-import org.hyperspray.example.model.TestItem
+import org.hyperspray.example.model.{TestItem, TestItemData}
 import scala.concurrent.Future
 
   
-trait InMemoryExampleService extends CollectionJsonService[TestItem, Int] with CollectionJsonEntityIdProvider[Int] {
+trait InMemoryExampleService extends CollectionJsonService[TestItem, TestItemData, Int] with CollectionJsonEntityIdProvider[Int] {
     
     var items = Seq(TestItem(1, "qwe", 10), TestItem(2, "asd", 20))
     
     override def idFromString(id: String) = id.toInt 
     
-    override def newId() = items.map(_.id).max + 1
+    def newId() = items.map(_.id).max + 1
     
     override def deleteById(id: Int): Future[Either[String, Unit]] = Future {
       items = items.filterNot(_.id == id)
@@ -24,9 +24,9 @@ trait InMemoryExampleService extends CollectionJsonService[TestItem, Int] with C
       items.filter(_.id == id.toInt).headOption
     }
     
-    override def add(item: TestItem): Future[Either[String, Int]] = Future {
+    override def add(item: TestItemData): Future[Either[String, Int]] = Future {
       val nId = newId()
-      items = items :+ item.copy(id = nId)
+      items = items :+ TestItem(nId, item.name, item.age)
       Right(nId)
     }
     

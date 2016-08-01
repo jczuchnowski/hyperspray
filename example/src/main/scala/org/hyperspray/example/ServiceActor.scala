@@ -11,8 +11,8 @@ import spray.http.MediaTypes._
 import spray.http.StatusCodes._
 import spray.util.LoggingContext
 import org.hyperspray.cj.FromEntityConversion._
-import org.hyperspray.cj.route.{CollectionJsonRoute, CollectionJsonReadOps, CollectionJsonWriteOps}
-import org.hyperspray.example.model.TestItem
+import org.hyperspray.cj.route.{CollectionJsonReadRoute, CollectionJsonWriteRoute}
+import org.hyperspray.example.model.{TestItem, TestItemData}
 import org.hyperspray.macros.{Convertable, Recoverable}
 
 class ServiceActor extends Actor with ActorLogging with HttpService {
@@ -25,16 +25,15 @@ class ServiceActor extends Actor with ActorLogging with HttpService {
     
   val basePath = "test-items"
   
-  val testItemRoute = new CollectionJsonRoute[TestItem, Int](basePath) 
-      with CollectionJsonReadOps[TestItem, Int] 
-      with CollectionJsonWriteOps[TestItem, Int] 
-      with InMemoryExampleService {
-    override def convertable = implicitly
-    override def recoverable = implicitly
-  }
+  val readRoute = new CollectionJsonReadRoute[TestItem, Int](basePath) 
+      with InMemoryExampleService
   
+  val writeRoute = new CollectionJsonWriteRoute[TestItemData, Int](basePath) 
+      with InMemoryExampleService
+
   def receive = runRoute(
-    testItemRoute.route
+    readRoute.route ~
+    writeRoute.route
   )
   
   implicit val timeout: Timeout = Timeout(2.seconds)

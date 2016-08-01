@@ -20,7 +20,7 @@ object ToEntityConversion {
         Right(implicitly[Recoverable[T]].fromParams(params))
       } catch {
         case e: NoSuchElementException =>
-          Left(MissingFieldIssue())
+          Left(MissingFieldIssue(e.getMessage))
       }
     }
   }

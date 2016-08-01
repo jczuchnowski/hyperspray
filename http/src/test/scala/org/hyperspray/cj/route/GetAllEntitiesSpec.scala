@@ -5,7 +5,6 @@ import java.net.URI
 
 import org.hyperspray.cj.FromEntityConversion._
 import org.hyperspray.macros.Convertable
-import org.hyperspray.macros.Recoverable
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
 
@@ -22,10 +21,7 @@ class GetAllEntitiesSpec extends FlatSpec with Matchers with ScalatestRouteTest 
   
   val basePath = "test-items"
     
-  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with CollectionJsonReadOps[TestItem, Int] with CollectionJsonWriteOps[TestItem, Int] with ExampleService {
-    override def convertable = implicitly
-    override def recoverable = implicitly
-  }).route
+  def route = (new CollectionJsonReadRoute[TestItem, Int](basePath) with ExampleService {}).route
   
   "GET all" should "respond with application/vnd.collection+json media type" in {
     Get("/test-items") ~> route ~> check {

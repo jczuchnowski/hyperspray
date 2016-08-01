@@ -5,6 +5,7 @@ import scala.concurrent.Future
 
 
 case class TestItem(id: Int, name: String, age: Int, active: Boolean)
+case class TestItemData(name: String, age: Int, active: Boolean)
   
 trait ExampleService extends CollectionJsonEntityIdProvider[Int] {
     
@@ -12,7 +13,7 @@ trait ExampleService extends CollectionJsonEntityIdProvider[Int] {
     
     override def idFromString(id: String) = id.toInt 
     
-    override def newId() = items.map(_.id).max + 1
+    def newId() = items.map(_.id).max + 1
     
     def deleteById(id: Int): Future[Either[String, Unit]] = Future {
       items = items.filterNot(_.id == id)
@@ -25,9 +26,9 @@ trait ExampleService extends CollectionJsonEntityIdProvider[Int] {
       items.filter(_.id == id.toInt).headOption
     }
     
-    def add(item: TestItem): Future[Either[String, Int]] = Future {
+    def add(itemData: TestItemData): Future[Either[String, Int]] = Future {
       val nId = newId()
-      items = items :+ item.copy(id = nId)
+      items = items :+ TestItem(nId, itemData.name, itemData.age, itemData.active)
       Right(nId)
     }
     
