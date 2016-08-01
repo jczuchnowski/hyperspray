@@ -6,7 +6,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
  * Set of method needed to fully implement the collection+json hypermedia type.
  */
-trait CollectionJsonService[Entity, Id] {
+trait CollectionJsonService[Entity, EntityData, Id] {
 
   implicit def executionContext: ExecutionContext
   
@@ -28,7 +28,7 @@ trait CollectionJsonService[Entity, Id] {
   /**
    * Adds a new Entity to the underlying collection and returns its new Id.
    */
-  def add(entity: Entity): Future[Either[String, Id]]
+  def add(entity: EntityData): Future[Either[String, Id]]
   
   def find(criteria: Map[String, String]): Future[Seq[Entity]]
 }

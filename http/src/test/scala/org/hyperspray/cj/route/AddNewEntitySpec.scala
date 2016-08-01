@@ -4,7 +4,6 @@ import CollectionJsonRoute.`application/vnd.collection+json`
 import java.net.URI
 
 import org.hyperspray.cj.FromEntityConversion._
-import org.hyperspray.macros.Convertable
 import org.hyperspray.macros.Recoverable
 import org.scalatest.FlatSpec
 import org.scalatest.Matchers
@@ -22,32 +21,25 @@ class AddNewEntitySpec extends FlatSpec with Matchers with ScalatestRouteTest wi
   
   val basePath = "test-items"
     
-  def route = (new CollectionJsonRoute[TestItem, Int](basePath) with CollectionJsonReadOps[TestItem, Int] with CollectionJsonWriteOps[TestItem, Int] with ExampleService {
-    override def convertable = implicitly
-    override def recoverable = implicitly
-  }).route
+  def route = (new CollectionJsonWriteRoute[TestItemData, Int](basePath) with ExampleService {}).route
 
   val tmpl = HttpEntity(`application/json`, 
-"""
-{"template" : {
-    "data" : [
-        {"name" : "name", "value" : "Jakub"},
-        {"name" : "age", "value" : 33},
-        {"name" : "active", "value" : true}
-    ]
-}}
-""")
+    """|{"template" : {
+       | "data" : [
+       |     {"name" : "name", "value" : "Jakub"},
+       |     {"name" : "age", "value" : 33},
+       |     {"name" : "active", "value" : true}
+       | ]
+       |}}""".stripMargin)
 
   //template with a missing field
   val badTmpl = HttpEntity(`application/json`, 
-"""
-{"template" : {
-    "data" : [
-        {"name" : "id", "value" : "124"},
-        {"name" : "age", "value" : 33}
-    ]
-}}
-""")
+    """|{"template" : {
+       | "data" : [
+       |     {"name" : "name", "value" : "Jakub"},
+       |     {"name" : "age", "value" : 33}
+       | ]
+       |}}""".stripMargin)
   
   "POST template" should "respond with application/vnd.collection+json media type" ignore {
     Post("/test-items", tmpl) ~> route ~> check {

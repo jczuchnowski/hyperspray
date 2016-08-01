@@ -13,8 +13,4 @@ trait CollectionJsonEntityIdProvider[Id] {
    */
   def idFromString(id: String): Id
   
-  /**
-   * Returns next unique Id.
-   */
-  def newId(): Id
 }

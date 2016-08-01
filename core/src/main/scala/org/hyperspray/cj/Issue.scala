@@ -4,6 +4,6 @@ sealed trait Issue {
   def error: String
 }
 
-case class MissingFieldIssue() extends Issue {
-  override lazy val error = "Missing field"
+case class MissingFieldIssue(message: String) extends Issue {
+  override lazy val error = s"Missing field ($message)"
 }
