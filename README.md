@@ -1,4 +1,6 @@
-##Hyperspray
+This is no longer maintained. Development was moved to https://github.com/ScalaConsultants/hyperdrive.
+
+## Hyperspray
 
 Hypermedia library for spray/akka-http.
 
